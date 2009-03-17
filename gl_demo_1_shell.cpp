@@ -11,11 +11,11 @@
 #include <GL/glut.h>
 #include <GL/freeglut_ext.h>
 #include <sys/time.h>
-
+double time = 0.0;
 ///////////////////////////////
 double pi=3.1415926;
-const double dt = 5e-3;
-const double G = 5.0e-3;
+const double dt = 1e-3;
+const double G = 1.0e-1;
 
 int	w=640,h=480;
 
@@ -54,9 +54,9 @@ Body::Body(double massin) {
 }
 
 void Body::simulate(double dt) {
-	printf("a:%f %f %f\n",accel[0],accel[1],accel[2]);
-	printf("v:%f %f %f\n",velocity[0],velocity[1],velocity[2]);
-	printf("r:%f %f %f\n",position[0],position[1],position[2]);
+//	printf("a:%f %f %f\n",accel[0],accel[1],accel[2]);
+//	printf("v:%f %f %f\n",velocity[0],velocity[1],velocity[2]);
+//	printf("r:%f %f %f\n",position[0],position[1],position[2]);
 	for (int i = 0; i < 3; i++) {
 		position[i] += velocity[i]*dt;
 		position[i] += accel[i]*dt*dt/2;
@@ -93,8 +93,16 @@ double systemEnergy()
 	double energy = 0;
 	//potentials
 	energy-=G*bodies[0].mass*bodies[1].mass/sqrt((bodies[0].x()-bodies[1].x())*(bodies[0].x()-bodies[1].x())+(bodies[0].y()-bodies[1].y())*(bodies[0].y()-bodies[1].y())+(bodies[0].z()-bodies[1].z())*(bodies[0].z()-bodies[1].z()));
-	energy+=bodies[0].mass*magnitude_sq(bodies[0].velocity)/2;
-	energy+=bodies[1].mass*magnitude_sq(bodies[1].velocity)/2;
+	//printf("p:%f\n",energy);
+	double v1 = sqrt(magnitude_sq(bodies[0].velocity));
+//	energy += bodies[0].mass*v1*v1/2;
+//	printf("%f\n",energy);
+//	printf("%f * %f * %f / 2\n", bodies[0].mass, v1, v1);
+	energy+=bodies[0].mass*(bodies[0].velocity[0]*bodies[0].velocity[0]+bodies[0].velocity[1]*bodies[0].velocity[1]+bodies[0].velocity[2]*bodies[0].velocity[2])/2;
+	energy+=bodies[1].mass*(bodies[1].velocity[0]*bodies[1].velocity[0]+bodies[1].velocity[1]*bodies[1].velocity[1]+bodies[1].velocity[2]*bodies[1].velocity[2])/2;
+	//energy+=bodies[0].mass*magnitude_sq(bodies[0].velocity)/2;
+	//energy+=bodies[1].mass*magnitude_sq(bodies[1].velocity)/2;
+//	printf("v1: %f v2: %f\n",sqrt(magnitude_sq(bodies[0].velocity)),sqrt(magnitude_sq(bodies[1].velocity)));
 	return energy;
 }
 
@@ -103,12 +111,12 @@ void interact(Body &a, Body &b)
 	double distance_sq = (a.x()-b.x())*(a.x()-b.x())+(a.y()-b.y())*(a.y()-b.y())+(a.z()-b.z())*(a.z()-b.z());
 	double mag = G * a.mass * b.mass / distance_sq;
 	printf("mag:%f\n",mag);
-	a.accelx((b.x()-a.x())*mag/sqrt(distance_sq));
-	a.accely((b.y()-a.y())*mag/sqrt(distance_sq));
-	a.accelz((b.z()-a.z())*mag/sqrt(distance_sq));
-	b.accelx((a.x()-b.x())*mag/sqrt(distance_sq));
-	b.accely((a.y()-b.y())*mag/sqrt(distance_sq));
-	b.accelz((a.z()-b.z())*mag/sqrt(distance_sq));
+	a.accelx((b.x()-a.x())*mag/sqrt(distance_sq)/a.mass);
+	a.accely((b.y()-a.y())*mag/sqrt(distance_sq)/a.mass);
+	a.accelz((b.z()-a.z())*mag/sqrt(distance_sq)/a.mass);
+	b.accelx((a.x()-b.x())*mag/sqrt(distance_sq)/b.mass);
+	b.accely((a.y()-b.y())*mag/sqrt(distance_sq)/b.mass);
+	b.accelz((a.z()-b.z())*mag/sqrt(distance_sq)/b.mass);
 }
 
 void drawString(char* s)
@@ -123,20 +131,16 @@ void display(void)
 	double t;
 
 	glClear(GL_COLOR_BUFFER_BIT); // clear the screen
-	glColor3f(cos(2*counter),sin(3*counter+M_PI/8),sin(counter));
+//	glColor3f(cos(2*counter),sin(3*counter+M_PI/8),sin(counter));
 
-	glutWireTeapot(0.5);
-
-	glPushMatrix();
 	glColor3f(0.0,0.0,0.0);
-	glTranslatef(1.0,0.0,0.0);
-	glutWireSphere(0.2,6,6);
-	glPopMatrix();
+	glutWireTeapot(0.1);
 
+	glColor3f(0.0,0.0,0.0);
 	for (int i = 0; i < 2; i++) {
 		glPushMatrix();
 		glTranslatef(bodies[i].x(),bodies[i].y(),bodies[i].z());
-		glutWireSphere(0.1,8,8);
+		glutWireSphere(0.1,16,16);
 		glPopMatrix();
 	}
 
@@ -171,6 +175,8 @@ void look()
 }
 void idle(void)
 {
+	time+=dt;
+	printf("t:%f\n",time);
 	counter+=0.01;
 	if(up>0.0)
 	{
@@ -248,8 +254,8 @@ void init2body()
 
 	bodies[0].mass = 50.0;
 	bodies[1].mass = 50.0;
-	bodies[0].position[2] = -1.0;
-	bodies[1].position[2] = 1.0;
+	bodies[0].position[2] = -0.5;
+	bodies[1].position[2] = 0.5;
 	bodies[0].velocity[0] = 1.5;
 	bodies[1].velocity[0] = -1.5;
 
