@@ -14,8 +14,8 @@
 
 ///////////////////////////////
 double pi=3.1415926;
-const double dt = 1e-3;
-const double G = 1.0;
+const double dt = 5e-3;
+const double G = 5.0e-3;
 
 int	w=640,h=480;
 
@@ -45,7 +45,7 @@ class Body {
 		double z() {return position[2];};
 		double accelx(double a) {accel[0]+=a;};
 		double accely(double a) {accel[1]+=a;};
-		double accelz(double a) {printf("%f\n",a);accel[2]+=a;};
+		double accelz(double a) {accel[2]+=a;};
 		void simulate(double dt);
 };
 
@@ -61,14 +61,16 @@ void Body::simulate(double dt) {
 		position[i] += velocity[i]*dt;
 		position[i] += accel[i]*dt*dt/2;
 		velocity[i] += accel[i]*dt;
-//		accel[i] = 0.0;
+		accel[i] = 0.0;
 	}
 }
 
 Body bodies[3];
 ///////////////////////////////
 
-void interact(Body a, Body b);
+double magnitude_sq(const double* a);
+double systemEnergy();
+void interact(Body &a, Body &b);
 void drawString(char* s);
 void display(void);
 void look();
@@ -81,7 +83,22 @@ void reshape(int wscr,int hscr);
 
 ///////////////////////////////
 
-void interact(Body a, Body b)
+double magnitude_sq(const double* a)
+{
+	return a[0]*a[0]+a[1]*a[1]+a[2]*a[2];
+}
+
+double systemEnergy()
+{
+	double energy = 0;
+	//potentials
+	energy-=G*bodies[0].mass*bodies[1].mass/sqrt((bodies[0].x()-bodies[1].x())*(bodies[0].x()-bodies[1].x())+(bodies[0].y()-bodies[1].y())*(bodies[0].y()-bodies[1].y())+(bodies[0].z()-bodies[1].z())*(bodies[0].z()-bodies[1].z()));
+	energy+=bodies[0].mass*magnitude_sq(bodies[0].velocity)/2;
+	energy+=bodies[1].mass*magnitude_sq(bodies[1].velocity)/2;
+	return energy;
+}
+
+void interact(Body &a, Body &b)
 {
 	double distance_sq = (a.x()-b.x())*(a.x()-b.x())+(a.y()-b.y())*(a.y()-b.y())+(a.z()-b.z())*(a.z()-b.z());
 	double mag = G * a.mass * b.mass / distance_sq;
@@ -133,6 +150,7 @@ void display(void)
 	glRasterPos2i(0,0);
 	drawString(str);
 	glutSwapBuffers();
+	printf("energy:%f\n",systemEnergy());
 }
 void look()
 {
@@ -232,6 +250,8 @@ void init2body()
 	bodies[1].mass = 50.0;
 	bodies[0].position[2] = -1.0;
 	bodies[1].position[2] = 1.0;
+	bodies[0].velocity[0] = 1.5;
+	bodies[1].velocity[0] = -1.5;
 
 
 }
