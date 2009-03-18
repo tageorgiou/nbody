@@ -18,6 +18,7 @@ const double dt = 1e-4;
 const double G = 1.0e-1;
 
 int	w=640,h=480;
+GLUquadric *background;
 
 double rho,phi,theta,up=1.0,oldtheta,oldphi,counter=0.0;
 double xc,yc,zc,xe,ye,ze;
@@ -80,8 +81,18 @@ void motion(int xscr,int yscr);
 void mouse_wheel(int wheel,int direction,int xscr,int yscr);
 void keyfunc(unsigned char key,int xscr,int yscr);
 void reshape(int wscr,int hscr);
-
+void lighting();
 ///////////////////////////////
+
+void lighting() {
+	GLfloat global_ambient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
+
+	GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+	GLfloat diffuseLight[] = { 0.1f, 0.1f, 0.1, 1.0f };
+	GLfloat specularLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+	GLfloat position[] = { -1.5f, 1.5f, -4.0f, 1.0f };
+}
 
 double magnitude_sq(const double* a)
 {
@@ -133,8 +144,17 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the screen
 //	glColor3f(cos(2*counter),sin(3*counter+M_PI/8),sin(counter));
 
+	glDepthMask(GL_FALSE);
+	gluSphere(background,400,16,16);
+	glDepthMask(GL_TRUE);
+	
+	//lighting();
+
+	//glPushAttrib(GL_NORMALIZE);
+	//glFrontFace(GL_CW);
 	glColor3f(0.0,0.0,0.8);
 	glutSolidTeapot(0.1);
+	//glPushAttrib(GL_NORMALIZE);
 
 	glColor3f(0.5,0.0,0.5);
 	for (int i = 0; i < 2; i++) {
@@ -150,7 +170,7 @@ void display(void)
 	double us = (timeb.tv_sec-timea.tv_sec)*1000000 + (timeb.tv_usec-timea.tv_usec);
 	char str[80];
 	sprintf(str,"%3.1f",1e6/us);
-	glColor3f(0.0,0.0,0.0);
+	glColor3f(1.0,1.0,1.0);
 	glRasterPos2i(0,0);
 	drawString(str);
 	glutSwapBuffers();
@@ -236,6 +256,7 @@ void keyfunc(unsigned char key,int xscr,int yscr)
 }
 void reshape(int wscr,int hscr)
 {
+	printf("reshape\n");
 	GLfloat aspect_ratio;
 
 	w=wscr;
@@ -277,25 +298,19 @@ int main(int argc,char* argv[])
 
 	glClearColor(1.0,1.0,1.0,0.0);
 	glShadeModel(GL_SMOOTH);
+	//glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 
-	GLfloat global_ambient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
+	glFrontFace(GL_CCW);
 
-	GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-	GLfloat diffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
-	GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	GLfloat position[] = { -1.5f, 1.0f, -4.0f, 1.0f };
-
-	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-	glLightfv(GL_LIGHT0, GL_POSITION, position);
+	background = gluNewQuadric();
+	gluQuadricTexture(background, GL_TRUE);
 
 	glEnable(GL_COLOR_MATERIAL);
 	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+	//glColorMaterial(GL_BACK, GL_AMBIENT_AND_DIFFUSE);
 
 	glutDisplayFunc(display);
 	glutIdleFunc(idle);
