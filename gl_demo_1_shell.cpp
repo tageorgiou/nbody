@@ -14,7 +14,7 @@
 double time = 0.0;
 ///////////////////////////////
 double pi=3.1415926;
-const double dt = 1e-3;
+const double dt = 1e-4;
 const double G = 1.0e-1;
 
 int	w=640,h=480;
@@ -130,17 +130,17 @@ void display(void)
 {
 	double t;
 
-	glClear(GL_COLOR_BUFFER_BIT); // clear the screen
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the screen
 //	glColor3f(cos(2*counter),sin(3*counter+M_PI/8),sin(counter));
 
-	glColor3f(0.0,0.0,0.0);
-	glutWireTeapot(0.1);
+	glColor3f(0.0,0.0,0.8);
+	glutSolidTeapot(0.1);
 
-	glColor3f(0.0,0.0,0.0);
+	glColor3f(0.5,0.0,0.5);
 	for (int i = 0; i < 2; i++) {
 		glPushMatrix();
 		glTranslatef(bodies[i].x(),bodies[i].y(),bodies[i].z());
-		glutWireSphere(0.1,16,16);
+		glutSolidSphere(0.1,16,16);
 		glPopMatrix();
 	}
 
@@ -150,7 +150,7 @@ void display(void)
 	double us = (timeb.tv_sec-timea.tv_sec)*1000000 + (timeb.tv_usec-timea.tv_usec);
 	char str[80];
 	sprintf(str,"%3.1f",1e6/us);
-	glColor3f(0.0,0.0,1.0);
+	glColor3f(0.0,0.0,0.0);
 	glRasterPos2i(0,0);
 	drawString(str);
 	glutSwapBuffers();
@@ -270,13 +270,32 @@ int main(int argc,char* argv[])
 	xc=yc=zc=0.0;
 
 	glutInit(&argc,argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(w,h);
 	glutInitWindowPosition(100,50);
 	glutCreateWindow("OpenGL Demo");
 
 	glClearColor(1.0,1.0,1.0,0.0);
 	glShadeModel(GL_SMOOTH);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+	GLfloat global_ambient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
+
+	GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+	GLfloat diffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
+	GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat position[] = { -1.5f, 1.0f, -4.0f, 1.0f };
+
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+	glLightfv(GL_LIGHT0, GL_POSITION, position);
+
+	glEnable(GL_COLOR_MATERIAL);
+	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
 	glutDisplayFunc(display);
 	glutIdleFunc(idle);
