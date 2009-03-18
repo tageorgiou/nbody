@@ -36,11 +36,14 @@ typedef struct {
 
 class Vector3D {
 	public:
-		Vector3D(double x0 = 1.0, double y0 = 1.0, double z0 = 1.0);
-		double x,y,z;
+		Vector3D(double x0 = 0.0, double y0 = 0.0, double z0 = 0.0);
+		double x, y, z;
 		double mag();
+		double mag_sq();
 		Vector3D operator+(const Vector3D &right);
 		Vector3D& operator+=(const Vector3D &right);
+		Vector3D operator/(const double &right);
+		Vector3D& operator/=(const double &right);
 		double& operator[](const int index);
 };
 
@@ -56,6 +59,11 @@ double Vector3D::mag()
 	return sqrt(x*x+y*y+z*z);
 }
 
+double Vector3D::mag_sq()
+{
+	return x*x+y*y+z*z;
+}
+
 Vector3D Vector3D::operator+(const Vector3D &right)
 {
 	this->x += right.x;
@@ -68,6 +76,20 @@ Vector3D& Vector3D::operator+=(const Vector3D &right)
 	this->x += right.x;
 	this->y += right.y;
 	this->z += right.z;
+}
+
+Vector3D Vector3D::operator/(const double &right)
+{
+	this->x /= right;
+	this->y /= right;
+	this->z /= right;
+}
+
+Vector3D& Vector3D::operator/=(const double &right)
+{
+	this->x += right;
+	this->y += right;
+	this->z += right;
 }
 
 double& Vector3D::operator[](const int index)
@@ -89,9 +111,8 @@ class Body {
 		Body(double massin = 1.0, double rad = 0.1);
 		double mass;
 		Vector3D position;
-		//double position[3];
-		double velocity[3];
-		double accel[3];
+		Vector3D velocity;
+		Vector3D accel;
 		double x() {return position[0];};
 		double y() {return position[1];};
 		double z() {return position[2];};
@@ -122,7 +143,6 @@ void Body::simulate(double dt) {
 Body bodies[3];
 ///////////////////////////////
 
-double magnitude_sq(const double* a);
 double systemEnergy();
 void interact(Body &a, Body &b);
 void drawString(char* s);
@@ -147,18 +167,12 @@ void lighting() {
 	GLfloat position[] = { -1.5f, 1.5f, -4.0f, 1.0f };
 }
 
-double magnitude_sq(const double* a)
-{
-	return a[0]*a[0]+a[1]*a[1]+a[2]*a[2];
-}
-
 double systemEnergy()
 {
 	double energy = 0;
 	//potentials
 	energy-=G*bodies[0].mass*bodies[1].mass/sqrt((bodies[0].x()-bodies[1].x())*(bodies[0].x()-bodies[1].x())+(bodies[0].y()-bodies[1].y())*(bodies[0].y()-bodies[1].y())+(bodies[0].z()-bodies[1].z())*(bodies[0].z()-bodies[1].z()));
 	//printf("p:%f\n",energy);
-	double v1 = sqrt(magnitude_sq(bodies[0].velocity));
 //	energy += bodies[0].mass*v1*v1/2;
 //	printf("%f\n",energy);
 //	printf("%f * %f * %f / 2\n", bodies[0].mass, v1, v1);
