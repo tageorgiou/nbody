@@ -14,7 +14,7 @@
 double time = 0.0;
 ///////////////////////////////
 double pi=3.1415926;
-const double dt = 1e-4;
+const double dt = 1e-3;
 const double G = 1.0e-1;
 
 int	w=640,h=480;
@@ -34,9 +34,43 @@ typedef struct {
 	double radius;
 } body;
 
+class Vector3D {
+	public:
+		Vector3D(double x0 = 1.0, double y0 = 1.0, double z0 = 1.0);
+		double x,y,z;
+		double mag();
+		Vector3D operator+(const Vector3D &right);
+		Vector3D& operator+=(const Vector3D &right);
+};
+
+Vector3D::Vector3D(double x0, double y0, double z0)
+{
+	x = x0;
+	y = y0;
+	z = z0;
+}
+
+double Vector3D::mag()
+{
+	return sqrt(x*x+y*y+z*z);
+}
+
+Vector3D Vector3D::operator+(const Vector3D &right)
+{
+	this->x += right.x;
+	this->y += right.y;
+	this->z += right.z;
+}
+
+Vector3D& Vector3D::operator+=(const Vector3D &right)
+{
+	this->x += right.x;
+	this->y += right.y;
+	this->z += right.z;
+}
 class Body {
 	public:
-		Body(double massin = 1.0);
+		Body(double massin = 1.0, double rad = 0.1);
 		double mass;
 		double position[3];
 		double velocity[3];
@@ -47,11 +81,13 @@ class Body {
 		double accelx(double a) {accel[0]+=a;};
 		double accely(double a) {accel[1]+=a;};
 		double accelz(double a) {accel[2]+=a;};
+		double size;
 		void simulate(double dt);
 };
 
-Body::Body(double massin) {
+Body::Body(double massin, double rad) {
 	mass = massin;
+	size = rad;
 }
 
 void Body::simulate(double dt) {
@@ -160,7 +196,7 @@ void display(void)
 	for (int i = 0; i < 2; i++) {
 		glPushMatrix();
 		glTranslatef(bodies[i].x(),bodies[i].y(),bodies[i].z());
-		glutSolidSphere(0.1,16,16);
+		glutSolidSphere(bodies[i].size,16,16);
 		glPopMatrix();
 	}
 
