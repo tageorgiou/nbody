@@ -44,6 +44,9 @@ class Vector3D {
 		Vector3D& operator+=(const Vector3D &right);
 		Vector3D operator/(const double &right);
 		Vector3D& operator/=(const double &right);
+		Vector3D operator*(const double &right);
+		Vector3D& operator*=(const double &right);
+		double operator*(const Vector3D &right);
 		double& operator[](const int index);
 };
 
@@ -78,6 +81,29 @@ Vector3D& Vector3D::operator+=(const Vector3D &right)
 	this->z += right.z;
 }
 
+double Vector3D::operator*(const Vector3D &right)
+{
+	double dot = 0;
+	dot += x*right.x;
+	dot += y*right.y;
+	dot += z*right.z;
+	return dot;
+}
+
+Vector3D Vector3D::operator*(const double &right)
+{
+	this->x *= right;
+	this->y *= right;
+	this->z *= right;
+}
+
+Vector3D& Vector3D::operator*=(const double &right)
+{
+	this->x *= right;
+	this->y *= right;
+	this->z *= right;
+}
+
 Vector3D Vector3D::operator/(const double &right)
 {
 	this->x /= right;
@@ -87,9 +113,9 @@ Vector3D Vector3D::operator/(const double &right)
 
 Vector3D& Vector3D::operator/=(const double &right)
 {
-	this->x += right;
-	this->y += right;
-	this->z += right;
+	this->x /= right;
+	this->y /= right;
+	this->z /= right;
 }
 
 double& Vector3D::operator[](const int index)
