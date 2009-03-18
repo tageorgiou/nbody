@@ -14,7 +14,7 @@
 double time = 0.0;
 ///////////////////////////////
 double pi=3.1415926;
-const double dt = 1e-3;
+const double dt = 1e-2;
 const double G = 1.0e-1;
 
 int	w=640,h=480;
@@ -41,6 +41,7 @@ class Vector3D {
 		double mag();
 		Vector3D operator+(const Vector3D &right);
 		Vector3D& operator+=(const Vector3D &right);
+		double& operator[](const int index);
 };
 
 Vector3D::Vector3D(double x0, double y0, double z0)
@@ -68,11 +69,27 @@ Vector3D& Vector3D::operator+=(const Vector3D &right)
 	this->y += right.y;
 	this->z += right.z;
 }
+
+double& Vector3D::operator[](const int index)
+{
+	switch (index) {
+		case (0):
+			return x;
+		case (1):
+			return y;
+		case (2):
+			return z; 
+	}
+	printf("ERROR");
+	exit(1);
+}
+
 class Body {
 	public:
 		Body(double massin = 1.0, double rad = 0.1);
 		double mass;
-		double position[3];
+		Vector3D position;
+		//double position[3];
 		double velocity[3];
 		double accel[3];
 		double x() {return position[0];};
