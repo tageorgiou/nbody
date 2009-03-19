@@ -102,7 +102,9 @@ double systemEnergy()
 {
 	double energy = 0;
 	//potentials
-	energy-=G*bodies[0].mass*bodies[1].mass/sqrt((bodies[0].x()-bodies[1].x())*(bodies[0].x()-bodies[1].x())+(bodies[0].y()-bodies[1].y())*(bodies[0].y()-bodies[1].y())+(bodies[0].z()-bodies[1].z())*(bodies[0].z()-bodies[1].z()));
+	Vector3D r1 = bodies[0].position;
+	Vector3D r2 = bodies[1].position;
+	energy-=G*bodies[0].mass*bodies[1].mass/(r1-r2).mag();
 	//printf("p:%f\n",energy);
 //	energy += bodies[0].mass*v1*v1/2;
 //	printf("%f\n",energy);

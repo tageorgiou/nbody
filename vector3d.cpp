@@ -27,6 +27,13 @@ Vector3D Vector3D::operator+(const Vector3D &right)
 	this->z += right.z;
 }
 
+Vector3D Vector3D::operator-(const Vector3D &right)
+{
+	x -= right.x;
+	y -= right.y;
+	z -= right.z;
+}
+
 Vector3D& Vector3D::operator+=(const Vector3D &right)
 {
 	this->x += right.x;
