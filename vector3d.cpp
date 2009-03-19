@@ -50,9 +50,8 @@ double Vector3D::operator*(const Vector3D &right)
 
 Vector3D Vector3D::operator*(const double &right)
 {
-	this->x *= right;
-	this->y *= right;
-	this->z *= right;
+	Vector3D result(x*right, y*right, z*right);
+	return result;
 }
 
 Vector3D& Vector3D::operator*=(const double &right)
@@ -64,9 +63,8 @@ Vector3D& Vector3D::operator*=(const double &right)
 
 Vector3D Vector3D::operator/(const double &right)
 {
-	this->x /= right;
-	this->y /= right;
-	this->z /= right;
+	Vector3D result(x/right, y/right, z/right);
+	return result;
 }
 
 Vector3D& Vector3D::operator/=(const double &right)
