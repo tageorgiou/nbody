@@ -218,8 +218,6 @@ void mouse(int button,int state,int xscr,int yscr)
 
 	oldtheta = theta;
 	oldphi = phi;
-
-	theta      +=0.1;
 }
 void motion(int xscr,int yscr)
 {
