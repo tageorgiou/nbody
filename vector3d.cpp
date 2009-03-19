@@ -22,16 +22,14 @@ double Vector3D::mag_sq()
 
 Vector3D Vector3D::operator+(const Vector3D &right)
 {
-	this->x += right.x;
-	this->y += right.y;
-	this->z += right.z;
+	Vector3D result(x+right.x, y+right.y, z+right.z);
+	return result;
 }
 
 Vector3D Vector3D::operator-(const Vector3D &right)
 {
-	x -= right.x;
-	y -= right.y;
-	z -= right.z;
+	Vector3D result(x-right.x, y-right.y, z-right.z);
+	return result;
 }
 
 Vector3D& Vector3D::operator+=(const Vector3D &right)
