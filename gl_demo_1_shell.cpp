@@ -14,7 +14,7 @@
 double time = 0.0;
 ///////////////////////////////
 double pi=3.1415926;
-const double dt = 1e-2;
+const double dt = 1e-3;
 const double G = 1.0e-1;
 
 int	w=640,h=480;
@@ -264,7 +264,7 @@ void display(void)
 	char str[80];
 	sprintf(str,"%3.1f",1e6/us);
 	glColor3f(1.0,1.0,1.0);
-	glRasterPos2i(0,0);
+	glRasterPos3f(0.0,0.1,0.0);
 	drawString(str);
 	glutSwapBuffers();
 	printf("energy:%f\n",systemEnergy());
