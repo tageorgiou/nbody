@@ -11,6 +11,8 @@
 #include <GL/glut.h>
 #include <GL/freeglut_ext.h>
 #include <sys/time.h>
+#include "vector3d.h"
+
 double time = 0.0;
 ///////////////////////////////
 double pi=3.1415926;
@@ -25,6 +27,7 @@ double xc,yc,zc,xe,ye,ze;
 int mousebutton,clickedx,clickedy;
 struct timeval timea;
 struct timeval timeb;
+
 typedef struct {
 	double mass;
 	double x;
@@ -33,104 +36,6 @@ typedef struct {
 	double coord[3];
 	double radius;
 } body;
-
-class Vector3D {
-	public:
-		Vector3D(double x0 = 0.0, double y0 = 0.0, double z0 = 0.0);
-		double x, y, z;
-		double mag();
-		double mag_sq();
-		Vector3D operator+(const Vector3D &right);
-		Vector3D& operator+=(const Vector3D &right);
-		Vector3D operator/(const double &right);
-		Vector3D& operator/=(const double &right);
-		Vector3D operator*(const double &right);
-		Vector3D& operator*=(const double &right);
-		double operator*(const Vector3D &right);
-		double& operator[](const int index);
-};
-
-Vector3D::Vector3D(double x0, double y0, double z0)
-{
-	x = x0;
-	y = y0;
-	z = z0;
-}
-
-double Vector3D::mag()
-{
-	return sqrt(x*x+y*y+z*z);
-}
-
-double Vector3D::mag_sq()
-{
-	return x*x+y*y+z*z;
-}
-
-Vector3D Vector3D::operator+(const Vector3D &right)
-{
-	this->x += right.x;
-	this->y += right.y;
-	this->z += right.z;
-}
-
-Vector3D& Vector3D::operator+=(const Vector3D &right)
-{
-	this->x += right.x;
-	this->y += right.y;
-	this->z += right.z;
-}
-
-double Vector3D::operator*(const Vector3D &right)
-{
-	double dot = 0;
-	dot += x*right.x;
-	dot += y*right.y;
-	dot += z*right.z;
-	return dot;
-}
-
-Vector3D Vector3D::operator*(const double &right)
-{
-	this->x *= right;
-	this->y *= right;
-	this->z *= right;
-}
-
-Vector3D& Vector3D::operator*=(const double &right)
-{
-	this->x *= right;
-	this->y *= right;
-	this->z *= right;
-}
-
-Vector3D Vector3D::operator/(const double &right)
-{
-	this->x /= right;
-	this->y /= right;
-	this->z /= right;
-}
-
-Vector3D& Vector3D::operator/=(const double &right)
-{
-	this->x /= right;
-	this->y /= right;
-	this->z /= right;
-}
-
-double& Vector3D::operator[](const int index)
-{
-	switch (index) {
-		case (0):
-			return x;
-		case (1):
-			return y;
-		case (2):
-			return z; 
-	}
-	printf("ERROR");
-	exit(1);
-}
 
 class Body {
 	public:
