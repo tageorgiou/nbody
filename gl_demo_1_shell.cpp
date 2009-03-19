@@ -111,7 +111,6 @@ void interact(Body &a, Body &b)
 {
 	double distance_sq = (a.position-b.position).mag_sq();
 	double mag = G * a.mass * b.mass / distance_sq;
-	printf("mag:%f\n",mag);
 	a.accelx((b.x()-a.x())*mag/sqrt(distance_sq)/a.mass);
 	a.accely((b.y()-a.y())*mag/sqrt(distance_sq)/a.mass);
 	a.accelz((b.z()-a.z())*mag/sqrt(distance_sq)/a.mass);
@@ -164,7 +163,8 @@ void display(void)
 	glRasterPos3f(0.0,0.1,0.0);
 	drawString(str);
 	glutSwapBuffers();
-	printf("energy:%f\n",systemEnergy());
+	printf("energy:%f t:%f\n",systemEnergy(),time);
+	printf("%f %f\n",time,systemEnergy());
 }
 void look()
 {
@@ -186,7 +186,6 @@ void look()
 void idle(void)
 {
 	time+=dt;
-	printf("t:%f\n",time);
 	counter+=0.01;
 	if(up>0.0)
 	{
@@ -246,7 +245,6 @@ void keyfunc(unsigned char key,int xscr,int yscr)
 }
 void reshape(int wscr,int hscr)
 {
-	printf("reshape\n");
 	GLfloat aspect_ratio;
 
 	w=wscr;
