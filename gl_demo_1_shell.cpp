@@ -111,12 +111,8 @@ void interact(Body &a, Body &b)
 {
 	double distance_sq = (a.position-b.position).mag_sq();
 	double mag = G * a.mass * b.mass / distance_sq;
-	a.accelx((b.x()-a.x())*mag/sqrt(distance_sq)/a.mass);
-	a.accely((b.y()-a.y())*mag/sqrt(distance_sq)/a.mass);
-	a.accelz((b.z()-a.z())*mag/sqrt(distance_sq)/a.mass);
-	b.accelx((a.x()-b.x())*mag/sqrt(distance_sq)/b.mass);
-	b.accely((a.y()-b.y())*mag/sqrt(distance_sq)/b.mass);
-	b.accelz((a.z()-b.z())*mag/sqrt(distance_sq)/b.mass);
+	a.accel+=(b.position-a.position)*mag/sqrt(distance_sq)/a.mass;
+	b.accel+=(a.position-b.position)*mag/sqrt(distance_sq)/b.mass;
 }
 
 void drawString(char* s)
