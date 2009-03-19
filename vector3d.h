@@ -4,6 +4,7 @@ class Vector3D {
 		double x, y, z;
 		double mag();
 		double mag_sq();
+		void zero();
 		Vector3D operator+(const Vector3D &right);
 		Vector3D operator-(const Vector3D &right);
 		Vector3D& operator+=(const Vector3D &right);

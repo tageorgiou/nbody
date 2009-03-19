@@ -20,6 +20,13 @@ double Vector3D::mag_sq()
 	return x*x+y*y+z*z;
 }
 
+void Vector3D::zero()
+{
+	x = 0.0;
+	y = 0.0;
+	z = 0.0;
+}
+
 Vector3D Vector3D::operator+(const Vector3D &right)
 {
 	Vector3D result(x+right.x, y+right.y, z+right.z);

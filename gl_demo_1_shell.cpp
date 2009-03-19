@@ -63,12 +63,10 @@ void Body::simulate(double dt) {
 //	printf("a:%f %f %f\n",accel[0],accel[1],accel[2]);
 //	printf("v:%f %f %f\n",velocity[0],velocity[1],velocity[2]);
 //	printf("r:%f %f %f\n",position[0],position[1],position[2]);
-	for (int i = 0; i < 3; i++) {
-		position[i] += velocity[i]*dt;
-		position[i] += accel[i]*dt*dt/2;
-		velocity[i] += accel[i]*dt;
-		accel[i] = 0.0;
-	}
+	position += velocity*dt;
+	position += accel*dt*dt/2;
+	velocity += accel*dt;
+	accel.zero();
 }
 
 Body bodies[3];
