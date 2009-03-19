@@ -164,7 +164,7 @@ void display(void)
 	drawString(str);
 	glutSwapBuffers();
 	printf("energy:%f t:%f\n",systemEnergy(),time);
-	printf("%f %f\n",time,systemEnergy());
+	//printf("%f %f\n",time,systemEnergy());
 }
 void look()
 {
