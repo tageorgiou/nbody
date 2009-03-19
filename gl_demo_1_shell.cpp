@@ -18,6 +18,10 @@ double time = 0.0;
 double pi=3.1415926;
 const double dt = 1e-3;
 const double G = 1.0e-1;
+const double ema_a = 0.1;
+
+double ema_e = 0.0;
+double prev_energy = 0.0;
 
 int	w=640,h=480;
 GLUquadric *background;
@@ -198,6 +202,11 @@ void idle(void)
 	interact(bodies[0],bodies[1]);
 	bodies[0].simulate(dt);
 	bodies[1].simulate(dt);
+
+	double energy = systemEnergy();
+	ema_e = (energy-prev_energy)*ema_a+(1-ema_a)*ema_e;
+	prev_energy = energy;
+	printf("%f\n",ema_e);
 	look();
 	glutPostRedisplay();
 }
