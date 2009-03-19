@@ -111,7 +111,7 @@ double systemEnergy()
 
 void interact(Body &a, Body &b)
 {
-	double distance_sq = (a.x()-b.x())*(a.x()-b.x())+(a.y()-b.y())*(a.y()-b.y())+(a.z()-b.z())*(a.z()-b.z());
+	double distance_sq = (a.position-b.position).mag_sq();
 	double mag = G * a.mass * b.mass / distance_sq;
 	printf("mag:%f\n",mag);
 	a.accelx((b.x()-a.x())*mag/sqrt(distance_sq)/a.mass);
