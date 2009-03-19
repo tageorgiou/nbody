@@ -47,9 +47,6 @@ class Body {
 		double x() {return position[0];};
 		double y() {return position[1];};
 		double z() {return position[2];};
-		double accelx(double a) {accel[0]+=a;};
-		double accely(double a) {accel[1]+=a;};
-		double accelz(double a) {accel[2]+=a;};
 		double size;
 		void simulate(double dt);
 };
