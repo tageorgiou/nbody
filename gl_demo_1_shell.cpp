@@ -138,11 +138,11 @@ void display(void)
 
 	//glPushAttrib(GL_NORMALIZE);
 	//glFrontFace(GL_CW);
-	glColor3f(0.0,0.0,0.8);
-	glutSolidTeapot(0.1);
+	glColor3f(0.8,0.8,0.1);
+	glutSolidTeapot(0.15);
 	//glPushAttrib(GL_NORMALIZE);
 
-	glColor3f(0.5,0.0,0.5);
+	glColor3f(0.0,0.2,0.7);
 	for (int i = 0; i < 2; i++) {
 		glPushMatrix();
 		glTranslatef(bodies[i].x(),bodies[i].y(),bodies[i].z());
