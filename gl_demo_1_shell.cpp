@@ -48,7 +48,9 @@ class Body {
 		Body(double massin = 1.0, double rad = 0.1);
 		double mass;
 		Vector3D position;
+		Vector3D prevposition;
 		Vector3D velocity;
+		Vector3D prevvelocity;
 		Vector3D accel;
 		double x() {return position[0];};
 		double y() {return position[1];};
@@ -66,9 +68,18 @@ void Body::simulate(double dt) {
 //	printf("a:%f %f %f\n",accel[0],accel[1],accel[2]);
 //	printf("v:%f %f %f\n",velocity[0],velocity[1],velocity[2]);
 //	printf("r:%f %f %f\n",position[0],position[1],position[2]);
+
+	//finish previous timestep!!
+	velocity += accel*dt/2;
+
+	prevposition = position;
+	prevvelocity = velocity;	
+
 	position += velocity*dt;
 	position += accel*dt*dt/2;
-	velocity += accel*dt;
+
+	velocity += accel*dt/2;
+	//timestep is unfinished!
 	accel.zero();
 }
 
@@ -106,12 +117,12 @@ double systemEnergy()
 	//potentials
 	for (int n = 0; n < nbodies; n++) {
 		for (int m = n + 1; m < nbodies; m++) {
-			energy-=G*bodies[n].mass*bodies[m].mass/(bodies[n].position-bodies[m].position).mag();
+			energy-=G*bodies[n].mass*bodies[m].mass/(bodies[n].prevposition-bodies[m].prevposition).mag();
 		}
 	}
 	//kinetic energy
 	for (int n = 0; n < nbodies; n++) {
-		energy+=bodies[n].mass*bodies[n].velocity.mag_sq()/2;
+		energy+=bodies[n].mass*bodies[n].prevvelocity.mag_sq()/2;
 	}
 	return energy;
 }
