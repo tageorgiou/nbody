@@ -150,7 +150,7 @@ void display(void)
 	//glPushAttrib(GL_NORMALIZE);
 
 	glColor3f(0.0,0.2,0.7);
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < nbodies; i++) {
 		glPushMatrix();
 		glTranslatef(bodies[i].x(),bodies[i].y(),bodies[i].z());
 		glutSolidSphere(bodies[i].size,16,16);
