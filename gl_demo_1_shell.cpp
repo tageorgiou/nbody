@@ -191,21 +191,6 @@ void idle(void)
 {
 	time+=dt;
 	counter+=0.01;
-	if(up>0.0)
-	{
-		if(theta+0.001>pi)
-		{
-			up*=-1.0;
-			theta=-pi;
-		}
-	}
-	else if(theta+0.001>0.0)
-			up*=-1.0;
-	//theta+=0.01;
-
-	//phi+=0.01;
-	//rho+=sin(2*phi)*0.03 + cos(theta)*0.01;
-//	rho+=0.005;
 	for (int n = 0; n < nbodies; n++) {
 		for (int m = n + 1; m < nbodies; m++) {
 			interact(bodies[n],bodies[m]);
