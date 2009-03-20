@@ -145,8 +145,8 @@ void display(void)
 
 	//glPushAttrib(GL_NORMALIZE);
 	//glFrontFace(GL_CW);
-	glColor3f(0.8,0.8,0.1);
-	glutSolidTeapot(0.15);
+//	glColor3f(0.8,0.8,0.1);
+//	glutSolidTeapot(0.15);
 	//glPushAttrib(GL_NORMALIZE);
 
 	glColor3f(0.0,0.2,0.7);
