@@ -81,6 +81,7 @@ void drawString(char* s);
 void display(void);
 void look();
 void idle(void);
+void step();
 void mouse(int button,int state,int xscr,int yscr);
 void motion(int xscr,int yscr);
 void mouse_wheel(int wheel,int direction,int xscr,int yscr);
@@ -187,8 +188,7 @@ void look()
 	glLoadIdentity();
 	gluLookAt(xe,ye,ze, xc,yc,zc, 0.0,up,0.0);
 }
-void idle(void)
-{
+void step() {
 	time+=dt;
 	counter+=0.01;
 	for (int n = 0; n < nbodies; n++) {
@@ -204,6 +204,10 @@ void idle(void)
 	ema_e = (energy-prev_energy)*ema_a+(1-ema_a)*ema_e;
 	prev_energy = energy;
 	printf("%f\n",ema_e);
+}
+void idle(void)
+{
+	step();
 	look();
 	glutPostRedisplay();
 }
