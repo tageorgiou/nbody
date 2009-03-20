@@ -19,6 +19,8 @@ double pi=3.1415926;
 const double dt = 1e-3;
 const double G = 1.0e-1;
 const double ema_a = 0.1;
+int nbodies = 2;
+
 
 double ema_e = 0.0;
 double prev_energy = 0.0;
@@ -101,10 +103,15 @@ double systemEnergy()
 {
 	double energy = 0;
 	//potentials
-	energy-=G*bodies[0].mass*bodies[1].mass/(bodies[0].position-bodies[1].position).mag();
+	for (int n = 0; n < nbodies; n++) {
+		for (int m = n + 1; m < nbodies; m++) {
+			energy-=G*bodies[n].mass*bodies[m].mass/(bodies[n].position-bodies[m].position).mag();
+		}
+	}
 	//kinetic energy
-	energy+=bodies[0].mass*bodies[0].velocity.mag_sq()/2;
-	energy+=bodies[1].mass*bodies[1].velocity.mag_sq()/2;
+	for (int n = 0; n < nbodies; n++) {
+		energy+=bodies[n].mass*bodies[n].velocity.mag_sq()/2;
+	}
 	return energy;
 }
 
@@ -199,9 +206,14 @@ void idle(void)
 	//phi+=0.01;
 	//rho+=sin(2*phi)*0.03 + cos(theta)*0.01;
 //	rho+=0.005;
-	interact(bodies[0],bodies[1]);
-	bodies[0].simulate(dt);
-	bodies[1].simulate(dt);
+	for (int n = 0; n < nbodies; n++) {
+		for (int m = n + 1; m < nbodies; m++) {
+			interact(bodies[n],bodies[m]);
+		}
+	}
+	for (int n = 0; n < nbodies; n++) {
+		bodies[n].simulate(dt);
+	}
 
 	double energy = systemEnergy();
 	ema_e = (energy-prev_energy)*ema_a+(1-ema_a)*ema_e;
