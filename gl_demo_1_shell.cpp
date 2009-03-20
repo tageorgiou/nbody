@@ -207,7 +207,8 @@ void step() {
 }
 void idle(void)
 {
-	step();
+	for (int n = 0; n < 10; n++)
+		step();
 	look();
 	glutPostRedisplay();
 }
