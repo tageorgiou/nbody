@@ -289,7 +289,7 @@ void init3body()
 	bodies[1].position[2] = 0.5;
 	bodies[0].velocity[0] = 1.5;
 	bodies[1].velocity[0] = -1.5;
-	bodies[2].mass = 1.0;
+	bodies[2].mass = 10.0;
 }
 int main(int argc,char* argv[])
 {  
