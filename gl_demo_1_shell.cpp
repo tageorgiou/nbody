@@ -272,19 +272,28 @@ void reshape(int wscr,int hscr)
 }
 void init2body()
 {
-
+	nbodies = 2;
 	bodies[0].mass = 50.0;
 	bodies[1].mass = 50.0;
 	bodies[0].position[2] = -0.5;
 	bodies[1].position[2] = 0.5;
 	bodies[0].velocity[0] = 1.5;
 	bodies[1].velocity[0] = -1.5;
-
-
+}
+void init3body()
+{
+	nbodies = 3;
+	bodies[0].mass = 50.0;
+	bodies[1].mass = 50.0;
+	bodies[0].position[2] = -0.5;
+	bodies[1].position[2] = 0.5;
+	bodies[0].velocity[0] = 1.5;
+	bodies[1].velocity[0] = -1.5;
+	bodies[2].mass = 1.0;
 }
 int main(int argc,char* argv[])
 {  
-	init2body();
+	init3body();
 	rho=3.1;
 	phi=0.0;
 	theta=pi/2.0;
