@@ -13,6 +13,8 @@
 #include <sys/time.h>
 #include "vector3d.h"
 
+#define TARGETFPS 60
+
 double time = 0.0;
 ///////////////////////////////
 double pi=3.1415926;
@@ -171,8 +173,11 @@ void display(void)
 
 	//FPS code
 	timea=timeb;
-	gettimeofday(&timeb,NULL);
-	double us = (timeb.tv_sec-timea.tv_sec)*1000000 + (timeb.tv_usec-timea.tv_usec);
+	double us;
+	do {
+		gettimeofday(&timeb,NULL);
+		us = (timeb.tv_sec-timea.tv_sec)*1000000 + (timeb.tv_usec-timea.tv_usec);
+	} while (1e6/us > TARGETFPS);
 	char str[80];
 	sprintf(str,"%3.1f",1e6/us);
 	glColor3f(1.0,1.0,1.0);
