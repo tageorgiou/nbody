@@ -12,6 +12,7 @@
 #include <GL/freeglut_ext.h>
 #include <sys/time.h>
 #include "vector3d.h"
+#include <unistd.h>
 
 #define TARGETFPS 60
 
@@ -173,11 +174,10 @@ void display(void)
 
 	//FPS code
 	timea=timeb;
-	double us;
-	do {
-		gettimeofday(&timeb,NULL);
-		us = (timeb.tv_sec-timea.tv_sec)*1000000 + (timeb.tv_usec-timea.tv_usec);
-	} while (1e6/us > TARGETFPS);
+	gettimeofday(&timeb,NULL);
+	double us = (timeb.tv_sec-timea.tv_sec)*1000000 + (timeb.tv_usec-timea.tv_usec);
+	if (1.0e6/TARGETFPS > us)
+		usleep(1.0e6/TARGETFPS - us);
 	char str[80];
 	sprintf(str,"%3.1f",1e6/us);
 	glColor3f(1.0,1.0,1.0);
