@@ -179,9 +179,8 @@ void display(void)
 	glRasterPos3f(0.0,0.1,0.0);
 	drawString(str);
 	glutSwapBuffers();
-	printf("energy:%f t:%f\n",systemEnergy(),time);
+	printf("energy:%f t:%f delta E: %F\n",systemEnergy(),time,ema_e);
 	//printf("%f %f\n",time,systemEnergy());
-	printf("delta E: %f\n",ema_e);
 }
 void look()
 {
