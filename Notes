@@ -1,2 +1,2 @@
 Make sun light source to see eclipses
-assume constant acceleration and use deltax due to acceleration = 1/2 * x * t^2
+handle collisions - decrement nbodies, move array, add masses, keep momentum
