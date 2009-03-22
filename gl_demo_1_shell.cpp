@@ -181,6 +181,7 @@ void display(void)
 	glutSwapBuffers();
 	printf("energy:%f t:%f\n",systemEnergy(),time);
 	//printf("%f %f\n",time,systemEnergy());
+	printf("delta E: %f\n",ema_e);
 }
 void look()
 {
@@ -214,7 +215,6 @@ void step() {
 	double energy = systemEnergy();
 	ema_e = (energy-prev_energy)*ema_a+(1-ema_a)*ema_e;
 	prev_energy = energy;
-	printf("%f\n",ema_e);
 }
 void idle(void)
 {
