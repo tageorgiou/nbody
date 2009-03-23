@@ -23,6 +23,7 @@ const double dt = 1e-3;
 const double G = 1.0e-1;
 const double ema_a = 0.1;
 int nbodies = 2;
+bool firststep = true;
 
 
 double ema_e = 0.0;
@@ -56,6 +57,7 @@ class Body {
 		Vector3D velocity;
 		Vector3D prevvelocity;
 		Vector3D accel;
+		Vector3D prevaccel;
 		double x() {return position[0];};
 		double y() {return position[1];};
 		double z() {return position[2];};
@@ -74,16 +76,24 @@ void Body::simulate(double dt) {
 //	printf("r:%f %f %f\n",position[0],position[1],position[2]);
 
 	//finish previous timestep!!
-	velocity += accel*dt/2;
-
+//	velocity += accel*dt/2;
+//
+//	prevposition = position;
+//	prevvelocity = velocity;	
+//
+//	position += velocity*dt;
+//	position += accel*dt*dt/2;
+//
+//	velocity += accel*dt/2;
+//	//timestep is unfinished!
+//	accel.zero();
 	prevposition = position;
-	prevvelocity = velocity;	
-
-	position += velocity*dt;
-	position += accel*dt*dt/2;
-
-	velocity += accel*dt/2;
-	//timestep is unfinished!
+	prevvelocity = velocity;
+	if (firststep)
+		prevaccel = accel;
+	position = prevposition + prevvelocity * dt + prevaccel * dt * dt / 2;
+	velocity = prevvelocity + prevaccel * dt / 2 + accel * dt / 2;
+	prevaccel = accel;
 	accel.zero();
 }
 
@@ -232,6 +242,7 @@ void step() {
 	double energy = systemEnergy();
 	ema_e = (energy-prev_energy)*ema_a+(1-ema_a)*ema_e;
 	prev_energy = energy;
+	firststep = false;
 }
 void idle(void)
 {
