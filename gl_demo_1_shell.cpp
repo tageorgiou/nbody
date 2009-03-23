@@ -171,8 +171,8 @@ void display(void)
 	//glPushAttrib(GL_NORMALIZE);
 
 	//glColor3f(0.0,0.2,0.7);
-	float mcolor[] = {0.0f,0.0f,0.5f,1.0f};
-	float specReflect[] = {0.4f,0.4f,0.4f,1.0f};
+	float mcolor[] = {0.0f,0.0f,0.65f,1.0f};
+	float specReflect[] = {0.7f,0.7f,0.7f,1.0f};
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, specReflect);
 	glMateriali(GL_FRONT, GL_SHININESS, 96);
@@ -233,7 +233,7 @@ void step() {
 }
 void idle(void)
 {
-	for (int n = 0; n < 10; n++)
+	for (int n = 0; n < 30; n++)
 		step();
 	look();
 	glutPostRedisplay();
