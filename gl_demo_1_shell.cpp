@@ -19,7 +19,7 @@
 double time = 0.0;
 ///////////////////////////////
 double pi=3.1415926;
-const double dt = 1e-4;
+const double dt = 1e-3;
 const double G = 1.0e-1;
 const double ema_a = 0.1;
 int nbodies = 2;
@@ -86,7 +86,7 @@ void Body::simulate(double dt) {
 	accel.zero();
 }
 
-Body bodies[8];
+Body bodies[16];
 ///////////////////////////////
 
 double systemEnergy();
@@ -105,13 +105,17 @@ void lighting();
 ///////////////////////////////
 
 void lighting() {
-	GLfloat global_ambient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	GLfloat global_ambient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
 
-	GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-	GLfloat diffuseLight[] = { 0.1f, 0.1f, 0.1, 1.0f };
-	GLfloat specularLight[] = { 0.4f, 0.4f, 0.4f, 1.0f };
-	GLfloat position[] = { -0.5f, 2.5f, -0.0f, 1.0f };
+	GLfloat ambientLight[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+	GLfloat diffuseLight[] = { 0.6f, 0.6f, 0.6, 1.0f };
+	GLfloat specularLight[] = { 0.7f, 0.7f, 0.7f, 1.0f };
+	GLfloat position[] = { -0.0f, 0.0f, -0.0f, 1.0f };
+	glEnable(GL_LIGHT0);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
 }
 
 double systemEnergy()
@@ -306,12 +310,12 @@ void init3body()
 }
 void init8body()
 {
-	nbodies = 8;
+	nbodies = 16;
 	for (int n = 0; n < nbodies; n++) {
-		bodies[n].position[0] = 2*cos(2*M_PI*n/nbodies);
-		bodies[n].position[1] = 2*sin(2*M_PI*n/nbodies);
-		bodies[n].velocity[0] = -2*sin(2*M_PI*n/nbodies);
-		bodies[n].velocity[1] = 2*cos(2*M_PI*n/nbodies);
+		bodies[n].position[0] = (2+n%2*1.7)*cos(2*M_PI*n/nbodies);
+		bodies[n].position[1] = (2+n%2*1.7)*sin(2*M_PI*n/nbodies);
+		bodies[n].velocity[0] = -(2+n%2*1.7)*sin(2*M_PI*n/nbodies);
+		bodies[n].velocity[1] = (2+n%2*1.7)*cos(2*M_PI*n/nbodies);
 		bodies[n].mass = 50.0;
 	}
 }
@@ -334,7 +338,6 @@ int main(int argc,char* argv[])
 	//glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
 
 	glFrontFace(GL_CCW);
 
