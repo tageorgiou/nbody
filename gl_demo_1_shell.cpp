@@ -26,6 +26,7 @@ int nbodies = 2;
 
 
 double ema_e = 0.0;
+double ema_fps = 60.0;
 double prev_energy = 0.0;
 
 int	w=640,h=480;
@@ -190,7 +191,8 @@ void display(void)
 	if (1.0e6/TARGETFPS > us)
 		usleep(1.0e6/TARGETFPS - us);
 	char str[80];
-	sprintf(str,"%3.1f",1e6/us);
+	ema_fps = 1e6/us*ema_a + (1-ema_a)*ema_fps;
+	sprintf(str,"%3.1f",ema_fps);
 	glColor3f(1.0,1.0,1.0);
 	glRasterPos3f(0.0,0.1,0.0);
 	drawString(str);
