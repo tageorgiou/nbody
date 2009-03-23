@@ -86,7 +86,7 @@ void Body::simulate(double dt) {
 	accel.zero();
 }
 
-Body bodies[3];
+Body bodies[8];
 ///////////////////////////////
 
 double systemEnergy();
@@ -297,9 +297,20 @@ void init3body()
 	bodies[2].mass = 10.0;
 	bodies[2].size = 0.08;
 }
+void init8body()
+{
+	nbodies = 8;
+	for (int n = 0; n < nbodies; n++) {
+		bodies[n].position[0] = 2*cos(2*M_PI*n/nbodies);
+		bodies[n].position[1] = 2*sin(2*M_PI*n/nbodies);
+		bodies[n].velocity[0] = -2*sin(2*M_PI*n/nbodies);
+		bodies[n].velocity[1] = 2*cos(2*M_PI*n/nbodies);
+		bodies[n].mass = 50.0;
+	}
+}
 int main(int argc,char* argv[])
 {  
-	init3body();
+	init8body();
 	rho=3.1;
 	phi=0.0;
 	theta=pi/2.0;
