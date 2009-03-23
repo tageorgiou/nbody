@@ -19,7 +19,7 @@
 double time = 0.0;
 ///////////////////////////////
 double pi=3.1415926;
-const double dt = 1e-3;
+const double dt = 1e-4;
 const double G = 1.0e-1;
 const double ema_a = 0.1;
 int nbodies = 2;
@@ -110,8 +110,8 @@ void lighting() {
 
 	GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 	GLfloat diffuseLight[] = { 0.1f, 0.1f, 0.1, 1.0f };
-	GLfloat specularLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-	GLfloat position[] = { -1.5f, 1.5f, -4.0f, 1.0f };
+	GLfloat specularLight[] = { 0.4f, 0.4f, 0.4f, 1.0f };
+	GLfloat position[] = { -0.5f, 2.5f, -0.0f, 1.0f };
 }
 
 double systemEnergy()
@@ -150,13 +150,15 @@ void display(void)
 	double t;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the screen
-//	glColor3f(cos(2*counter),sin(3*counter+M_PI/8),sin(counter));
+//	glColor3f(cos(2*counter),sin(3*counter+M_PI/8),sin(coujnter));
+	float mblack[] = {0.0f,0.0f,0.0f,1.0f};
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mblack);
 
 	glDepthMask(GL_FALSE);
 	gluSphere(background,400,16,16);
 	glDepthMask(GL_TRUE);
 	
-	//lighting();
+	lighting();
 
 	//glPushAttrib(GL_NORMALIZE);
 	//glFrontFace(GL_CW);
@@ -164,7 +166,12 @@ void display(void)
 //	glutSolidTeapot(0.15);
 	//glPushAttrib(GL_NORMALIZE);
 
-	glColor3f(0.0,0.2,0.7);
+	//glColor3f(0.0,0.2,0.7);
+	float mcolor[] = {0.0f,0.0f,0.5f,1.0f};
+	float specReflect[] = {0.4f,0.4f,0.4f,1.0f};
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, specReflect);
+	glMateriali(GL_FRONT, GL_SHININESS, 96);
 	for (int i = 0; i < nbodies; i++) {
 		glPushMatrix();
 		glTranslatef(bodies[i].x(),bodies[i].y(),bodies[i].z());
@@ -334,8 +341,8 @@ int main(int argc,char* argv[])
 	background = gluNewQuadric();
 	gluQuadricTexture(background, GL_TRUE);
 
-	glEnable(GL_COLOR_MATERIAL);
-	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+	//glEnable(GL_COLOR_MATERIAL);
+	//glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 	//glColorMaterial(GL_BACK, GL_AMBIENT_AND_DIFFUSE);
 
 	glutDisplayFunc(display);
