@@ -13,6 +13,8 @@
 #include <sys/time.h>
 #include "vector3d.h"
 #include <unistd.h>
+#include <vector>
+using namespace std;
 
 #define TARGETFPS 60
 
@@ -22,7 +24,6 @@ double pi=3.1415926;
 const double dt = 1e-3;
 const double G = 1.0e-1;
 const double ema_a = 0.1;
-int nbodies = 2;
 bool firststep = true;
 
 
@@ -98,7 +99,8 @@ void Body::simulate(double dt) {
 //	accel.zero();
 }
 
-Body bodies[16];
+//Body bodies[16];
+vector<Body> bodies;
 ///////////////////////////////
 
 double systemEnergy();
@@ -134,13 +136,13 @@ double systemEnergy()
 {
 	double energy = 0;
 	//potentials
-	for (int n = 0; n < nbodies; n++) {
-		for (int m = n + 1; m < nbodies; m++) {
+	for (int n = 0; n < bodies.size(); n++) {
+		for (int m = n + 1; m < bodies.size(); m++) {
 			energy-=G*bodies[n].mass*bodies[m].mass/(bodies[n].prevposition-bodies[m].prevposition).mag();
 		}
 	}
 	//kinetic energy
-	for (int n = 0; n < nbodies; n++) {
+	for (int n = 0; n < bodies.size(); n++) {
 		energy+=bodies[n].mass*bodies[n].prevvelocity.mag_sq()/2;
 	}
 	return energy;
@@ -188,7 +190,7 @@ void display(void)
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, specReflect);
 	glMateriali(GL_FRONT, GL_SHININESS, 96);
-	for (int i = 0; i < nbodies; i++) {
+	for (int i = 0; i < bodies.size(); i++) {
 		glPushMatrix();
 		glTranslatef(bodies[i].x(),bodies[i].y(),bodies[i].z());
 		glutSolidSphere(bodies[i].size,16,16);
@@ -231,12 +233,12 @@ void look()
 void step() {
 	time+=dt;
 	counter+=0.01;
-	for (int n = 0; n < nbodies; n++) {
-		for (int m = n + 1; m < nbodies; m++) {
+	for (int n = 0; n < bodies.size(); n++) {
+		for (int m = n + 1; m < bodies.size(); m++) {
 			interact(bodies[n],bodies[m]);
 		}
 	}
-	for (int n = 0; n < nbodies; n++) {
+	for (int n = 0; n < bodies.size(); n++) {
 		bodies[n].simulate(dt);
 	}
 
@@ -302,7 +304,8 @@ void reshape(int wscr,int hscr)
 }
 void init2body()
 {
-	nbodies = 2;
+	for (int i = 0; i < 2; i++)
+		bodies.push_back(Body());
 	bodies[0].mass = 50.0;
 	bodies[1].mass = 50.0;
 	bodies[0].position[2] = -0.5;
@@ -312,7 +315,8 @@ void init2body()
 }
 void init3body()
 {
-	nbodies = 3;
+	for (int i = 0; i < 3; i++)
+		bodies.push_back(Body());
 	bodies[0].mass = 50.0;
 	bodies[1].mass = 50.0;
 	bodies[0].position[2] = -0.5;
@@ -324,8 +328,9 @@ void init3body()
 }
 void init8body()
 {
-	nbodies = 16;
+	int nbodies = 16;
 	for (int n = 0; n < nbodies; n++) {
+		bodies.push_back(Body());
 		bodies[n].position[0] = (2+n%2*1.7)*cos(2*M_PI*n/nbodies);
 		bodies[n].position[1] = (2+n%2*1.7)*sin(2*M_PI*n/nbodies);
 		bodies[n].velocity[0] = -(2+n%2*1.7)*sin(2*M_PI*n/nbodies);
