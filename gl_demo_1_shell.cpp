@@ -64,11 +64,25 @@ class Body {
 		double z() {return position[2];};
 		double size;
 		void simulate(double dt);
+		void merge(Body &b);
 };
 
 Body::Body(double massin, double rad) {
 	mass = massin;
 	size = rad;
+}
+
+void Body::merge(Body &b) {
+	double c1 = mass/(b.mass+mass);
+	double c2 = b.mass/(b.mass+mass);
+	position = position*c1 + b.position*c2;
+	prevposition = prevposition*c1 + b.prevposition*c2;
+	velocity = velocity*c1 + b.velocity*c2;
+	prevvelocity = prevvelocity*c1 + b.prevvelocity*c2;
+	accel = accel*c1 + b.accel*c2;
+	prevaccel = prevaccel*c1 + b.prevaccel*c2;
+	mass = mass + b.mass;
+	size = pow(b.size*b.size*b.size + size*size*size,1.0/3.0);
 }
 
 void Body::simulate(double dt) {
@@ -142,6 +156,7 @@ double systemEnergy()
 		}
 	}
 	//kinetic energy
+	double potential = energy;
 	for (int n = 0; n < bodies.size(); n++) {
 		energy+=bodies[n].mass*bodies[n].prevvelocity.mag_sq()/2;
 	}
@@ -241,6 +256,21 @@ void step() {
 	for (int n = 0; n < bodies.size(); n++) {
 		bodies[n].simulate(dt);
 	}
+
+	int n = 0;
+	while (n < bodies.size()) {
+		int m = n+1;
+		while (m < bodies.size()) {
+			if ((bodies[n].position-bodies[m].position).mag() < bodies[n].size + bodies[m].size) {
+				bodies[n].merge(bodies[m]);
+				bodies.erase(bodies.begin() + m);
+			} else {
+				m++;
+			}
+		}
+		n++;
+	}
+
 
 	double energy = systemEnergy();
 	ema_e = (energy-prev_energy)*ema_a+(1-ema_a)*ema_e;
