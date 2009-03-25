@@ -59,6 +59,7 @@ class Body {
 		Vector3D prevvelocity;
 		Vector3D accel;
 		Vector3D prevaccel;
+		double heatenergy;
 		double x() {return position[0];};
 		double y() {return position[1];};
 		double z() {return position[2];};
@@ -68,6 +69,7 @@ class Body {
 };
 
 Body::Body(double massin, double rad) {
+	heatenergy = 0.0;
 	mass = massin;
 	size = rad;
 }
@@ -75,6 +77,8 @@ Body::Body(double massin, double rad) {
 void Body::merge(Body &b) {
 	double c1 = mass/(b.mass+mass);
 	double c2 = b.mass/(b.mass+mass);
+	double ke_1 = (mass*prevvelocity.mag_sq() + b.mass*prevvelocity.mag_sq())/2;
+//	heatenergy-=G*mass*b.mass/(position-b.position).mag();
 	position = position*c1 + b.position*c2;
 	prevposition = prevposition*c1 + b.prevposition*c2;
 	velocity = velocity*c1 + b.velocity*c2;
@@ -83,6 +87,10 @@ void Body::merge(Body &b) {
 	prevaccel = prevaccel*c1 + b.prevaccel*c2;
 	mass = mass + b.mass;
 	size = pow(b.size*b.size*b.size + size*size*size,1.0/3.0);
+	heatenergy = heatenergy + b.heatenergy;
+	printf("collision!\n");	
+	double ke_2 = mass*prevvelocity.mag_sq()/2;
+	//heatenergy += ke_1 - ke_2;
 }
 
 void Body::simulate(double dt) {
@@ -159,6 +167,7 @@ double systemEnergy()
 	double potential = energy;
 	for (int n = 0; n < bodies.size(); n++) {
 		energy+=bodies[n].mass*bodies[n].prevvelocity.mag_sq()/2;
+		energy+=bodies[n].heatenergy;
 	}
 	return energy;
 }
@@ -205,10 +214,14 @@ void display(void)
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, specReflect);
 	glMateriali(GL_FRONT, GL_SHININESS, 96);
+//	printf("--\n");
 	for (int i = 0; i < bodies.size(); i++) {
 		glPushMatrix();
+		//printf("%f\n",bodies[i].heatenergy);
+		//float mcolor2[] = {log(bodies[i].heatenergy)/100,0.0f,0.65f,1.0f};
+		//glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor2);
 		glTranslatef(bodies[i].x(),bodies[i].y(),bodies[i].z());
-		glutSolidSphere(bodies[i].size,16,16);
+		glutSolidSphere(bodies[i].size,32,32);
 		glPopMatrix();
 	}
 
@@ -279,7 +292,7 @@ void step() {
 }
 void idle(void)
 {
-	for (int n = 0; n < 30; n++)
+	for (int n = 0; n < 1; n++)
 		step();
 	look();
 	glutPostRedisplay();
@@ -368,9 +381,23 @@ void init8body()
 		bodies[n].mass = 50.0;
 	}
 }
+void initlotsbodies()
+{
+	for (int n = 0; n < 2000; n++) {
+		bodies.push_back(Body());
+		bodies[n].position[0] = (double)rand()/RAND_MAX*20-10;
+		bodies[n].position[1] = (double)rand()/RAND_MAX*20-10;
+		bodies[n].position[2] = (double)rand()/RAND_MAX*20-10;
+		bodies[n].velocity[0] = (double)rand()/RAND_MAX*10-5;
+		bodies[n].velocity[1] = (double)rand()/RAND_MAX*10-5;
+		bodies[n].velocity[2] = (double)rand()/RAND_MAX*10-5;
+		bodies[n].mass = (double)rand()/RAND_MAX*50;
+		bodies[n].size = pow(bodies[n].mass,1.0/3.0)/10;
+	}
+}
 int main(int argc,char* argv[])
 {  
-	init8body();
+	initlotsbodies();
 	rho=3.1;
 	phi=0.0;
 	theta=pi/2.0;
