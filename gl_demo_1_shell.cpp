@@ -266,6 +266,7 @@ void step() {
 			interact(bodies[n],bodies[m]);
 		}
 	}
+	#pragma omp parallel for
 	for (int n = 0; n < bodies.size(); n++) {
 		bodies[n].simulate(dt);
 	}
@@ -383,21 +384,21 @@ void init8body()
 }
 void initlotsbodies()
 {
-	for (int n = 0; n < 2000; n++) {
+	for (int n = 0; n < 100; n++) {
 		bodies.push_back(Body());
-		bodies[n].position[0] = (double)rand()/RAND_MAX*20-10;
-		bodies[n].position[1] = (double)rand()/RAND_MAX*20-10;
-		bodies[n].position[2] = (double)rand()/RAND_MAX*20-10;
-		bodies[n].velocity[0] = (double)rand()/RAND_MAX*10-5;
-		bodies[n].velocity[1] = (double)rand()/RAND_MAX*10-5;
-		bodies[n].velocity[2] = (double)rand()/RAND_MAX*10-5;
+		bodies[n].position[0] = (double)rand()/RAND_MAX*40-20;
+		bodies[n].position[1] = (double)rand()/RAND_MAX*40-20;
+		bodies[n].position[2] = (double)rand()/RAND_MAX*40-20;
+		bodies[n].velocity[0] = (double)rand()/RAND_MAX*20-10;
+		bodies[n].velocity[1] = (double)rand()/RAND_MAX*20-10;
+		bodies[n].velocity[2] = (double)rand()/RAND_MAX*20-10;
 		bodies[n].mass = (double)rand()/RAND_MAX*50;
 		bodies[n].size = pow(bodies[n].mass,1.0/3.0)/10;
 	}
 }
 int main(int argc,char* argv[])
 {  
-	initlotsbodies();
+	init8body();
 	rho=3.1;
 	phi=0.0;
 	theta=pi/2.0;
@@ -411,7 +412,7 @@ int main(int argc,char* argv[])
 
 	glClearColor(1.0,1.0,1.0,0.0);
 	glShadeModel(GL_SMOOTH);
-	//glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 
