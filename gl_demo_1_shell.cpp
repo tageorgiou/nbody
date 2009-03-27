@@ -413,7 +413,7 @@ int main(int argc,char* argv[])
 	glutInitWindowPosition(100,50);
 	glutCreateWindow("OpenGL Demo");
 
-	glClearColor(1.0,1.0,1.0,0.0);
+	glClearColor(0.0,0.0,0.0,0.0);
 	glShadeModel(GL_SMOOTH);
 	//glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
 	glEnable(GL_DEPTH_TEST);
