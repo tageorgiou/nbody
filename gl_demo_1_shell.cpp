@@ -21,7 +21,7 @@ using namespace std;
 double time = 0.0;
 ///////////////////////////////
 double pi=3.1415926;
-const double dt = 1e-3;
+const double dt = 1e-2;
 const double G = 1.0e-1;
 const double ema_a = 0.1;
 bool firststep = true;
@@ -90,7 +90,7 @@ void Body::merge(Body &b) {
 	heatenergy = heatenergy + b.heatenergy;
 	printf("collision!\n");	
 	double ke_2 = mass*prevvelocity.mag_sq()/2;
-	//heatenergy += ke_1 - ke_2;
+	heatenergy += ke_1 - ke_2;
 }
 
 void Body::simulate(double dt) {
@@ -176,7 +176,7 @@ void interact(Body &a, Body &b)
 {
 	double distance_sq = (a.position-b.position).mag_sq();
 	double mag = G * a.mass * b.mass / distance_sq;
-	a.accel+=(b.position-a.position)*mag/sqrt(distance_sq)/a.mass;
+	//a.accel+=(b.position-a.position)*mag/sqrt(distance_sq)/a.mass;
 	b.accel+=(a.position-b.position)*mag/sqrt(distance_sq)/b.mass;
 }
 
@@ -218,8 +218,8 @@ void display(void)
 	for (int i = 0; i < bodies.size(); i++) {
 		glPushMatrix();
 		//printf("%f\n",bodies[i].heatenergy);
-		//float mcolor2[] = {log(bodies[i].heatenergy)/100,0.0f,0.65f,1.0f};
-		//glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor2);
+		float mcolor2[] = {log(bodies[i].heatenergy)/100,0.0f,0.65f,1.0f};
+		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor2);
 		glTranslatef(bodies[i].x(),bodies[i].y(),bodies[i].z());
 		glutSolidSphere(bodies[i].size,32,32);
 		glPopMatrix();
@@ -229,8 +229,8 @@ void display(void)
 	timea=timeb;
 	gettimeofday(&timeb,NULL);
 	double us = (timeb.tv_sec-timea.tv_sec)*1000000 + (timeb.tv_usec-timea.tv_usec);
-	if (1.0e6/TARGETFPS > us)
-		usleep(1.0e6/TARGETFPS - us);
+//	if (1.0e6/TARGETFPS > us)
+		//usleep(1.0e6/TARGETFPS - us);
 	char str[80];
 	ema_fps = 1e6/us*ema_a + (1-ema_a)*ema_fps;
 	sprintf(str,"%3.1f",ema_fps);
@@ -262,7 +262,10 @@ void step() {
 	time+=dt;
 	counter+=0.01;
 	for (int n = 0; n < bodies.size(); n++) {
-		for (int m = n + 1; m < bodies.size(); m++) {
+		#pragma omp parallel for
+		for (int m = 0; m < bodies.size(); m++) {
+			if (n==m)
+				continue;
 			interact(bodies[n],bodies[m]);
 		}
 	}
@@ -384,21 +387,21 @@ void init8body()
 }
 void initlotsbodies()
 {
-	for (int n = 0; n < 100; n++) {
+	for (int n = 0; n < 500; n++) {
 		bodies.push_back(Body());
-		bodies[n].position[0] = (double)rand()/RAND_MAX*40-20;
-		bodies[n].position[1] = (double)rand()/RAND_MAX*40-20;
-		bodies[n].position[2] = (double)rand()/RAND_MAX*40-20;
-		bodies[n].velocity[0] = (double)rand()/RAND_MAX*20-10;
-		bodies[n].velocity[1] = (double)rand()/RAND_MAX*20-10;
-		bodies[n].velocity[2] = (double)rand()/RAND_MAX*20-10;
+		bodies[n].position[0] = (double)rand()/RAND_MAX*20-10;
+		bodies[n].position[1] = (double)rand()/RAND_MAX*20-10;
+		bodies[n].position[2] = (double)rand()/RAND_MAX*20-10;
+		bodies[n].velocity[0] = (double)rand()/RAND_MAX*10-5;
+		bodies[n].velocity[1] = (double)rand()/RAND_MAX*10-5;
+		bodies[n].velocity[2] = (double)rand()/RAND_MAX*10-5;
 		bodies[n].mass = (double)rand()/RAND_MAX*50;
 		bodies[n].size = pow(bodies[n].mass,1.0/3.0)/10;
 	}
 }
 int main(int argc,char* argv[])
 {  
-	init8body();
+	initlotsbodies();
 	rho=3.1;
 	phi=0.0;
 	theta=pi/2.0;
@@ -412,7 +415,7 @@ int main(int argc,char* argv[])
 
 	glClearColor(1.0,1.0,1.0,0.0);
 	glShadeModel(GL_SMOOTH);
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
+	//glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 
