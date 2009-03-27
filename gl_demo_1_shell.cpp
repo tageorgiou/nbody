@@ -218,7 +218,7 @@ void display(void)
 	for (int i = 0; i < bodies.size(); i++) {
 		glPushMatrix();
 		//printf("%f\n",bodies[i].heatenergy);
-		float mcolor2[] = {log(bodies[i].heatenergy)/100,0.0f,0.65f,1.0f};
+		float mcolor2[] = {log(bodies[i].heatenergy)/20,0.0f,0.65f,1.0f};
 		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor2);
 		glTranslatef(bodies[i].x(),bodies[i].y(),bodies[i].z());
 		glutSolidSphere(bodies[i].size,32,32);
