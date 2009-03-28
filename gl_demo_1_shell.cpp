@@ -182,8 +182,9 @@ void interact(Body &a, Body &b)
 {
 	double distance_sq = (a.position-b.position).mag_sq();
 	double mag = G * a.mass * b.mass / distance_sq;
-	Vector3D a_accel = (b.position-a.position)*mag/sqrt(distance_sq)/a.mass;
-	Vector3D b_accel = (a.position-b.position)*mag/sqrt(distance_sq)/b.mass;
+	Vector3D posdiff = (b.position-a.position);
+	Vector3D a_accel = posdiff*(mag/sqrt(distance_sq)/a.mass);
+	Vector3D b_accel = posdiff*(-1*mag/sqrt(distance_sq)/b.mass);
 	#pragma omp critical
 	{
 	a.accel+=a_accel;//(b.position-a.position)*mag/sqrt(distance_sq)/a.mass;
@@ -309,6 +310,8 @@ void step() {
 }
 void idle(void)
 {
+	if (time > 1)
+		exit(0);
 	gettimeofday(&btimea,NULL);
 	for (int n = 0; n < 100; n++)
 		step();
