@@ -16,12 +16,14 @@
 #include <vector>
 using namespace std;
 
+#define ENABLE_COLLISIONS 0
+
 #define TARGETFPS 60
 
 double time = 0.0;
 ///////////////////////////////
 double pi=3.1415926;
-const double dt = 1e-2;
+const double dt = 1e-3;
 const double G = 1.0e-1;
 const double ema_a = 0.1;
 bool firststep = true;
@@ -39,6 +41,10 @@ double xc,yc,zc,xe,ye,ze;
 int mousebutton,clickedx,clickedy;
 struct timeval timea;
 struct timeval timeb;
+
+//benchmark stuff
+struct timeval btimea;
+struct timeval btimeb;
 
 typedef struct {
 	double mass;
@@ -176,8 +182,13 @@ void interact(Body &a, Body &b)
 {
 	double distance_sq = (a.position-b.position).mag_sq();
 	double mag = G * a.mass * b.mass / distance_sq;
-	//a.accel+=(b.position-a.position)*mag/sqrt(distance_sq)/a.mass;
-	b.accel+=(a.position-b.position)*mag/sqrt(distance_sq)/b.mass;
+	Vector3D a_accel = (b.position-a.position)*mag/sqrt(distance_sq)/a.mass;
+	Vector3D b_accel = (a.position-b.position)*mag/sqrt(distance_sq)/b.mass;
+	#pragma omp critical
+	{
+	a.accel+=a_accel;//(b.position-a.position)*mag/sqrt(distance_sq)/a.mass;
+	b.accel+=b_accel;//(a.position-b.position)*mag/sqrt(distance_sq)/b.mass;
+	}
 }
 
 void drawString(char* s)
@@ -238,7 +249,7 @@ void display(void)
 	glRasterPos3f(0.0,0.1,0.0);
 	drawString(str);
 	glutSwapBuffers();
-	printf("energy:%f t:%f delta E: %F\n",systemEnergy(),time,ema_e);
+	//printf("energy:%f t:%f delta E: %F\n",systemEnergy(),time,ema_e);
 	//printf("%f %f\n",time,systemEnergy());
 }
 void look()
@@ -261,9 +272,9 @@ void look()
 void step() {
 	time+=dt;
 	counter+=0.01;
+	#pragma omp parallel for
 	for (int n = 0; n < bodies.size(); n++) {
-		#pragma omp parallel for
-		for (int m = 0; m < bodies.size(); m++) {
+		for (int m = n+1; m < bodies.size(); m++) {
 			if (n==m)
 				continue;
 			interact(bodies[n],bodies[m]);
@@ -274,18 +285,20 @@ void step() {
 		bodies[n].simulate(dt);
 	}
 
-	int n = 0;
-	while (n < bodies.size()) {
-		int m = n+1;
-		while (m < bodies.size()) {
-			if ((bodies[n].position-bodies[m].position).mag() < bodies[n].size + bodies[m].size) {
-				bodies[n].merge(bodies[m]);
-				bodies.erase(bodies.begin() + m);
-			} else {
-				m++;
+	if (ENABLE_COLLISIONS) {
+		int n = 0;
+		while (n < bodies.size()) {
+			int m = n+1;
+			while (m < bodies.size()) {
+				if ((bodies[n].position-bodies[m].position).mag() < bodies[n].size + bodies[m].size) {
+					bodies[n].merge(bodies[m]);
+					bodies.erase(bodies.begin() + m);
+				} else {
+					m++;
+				}
 			}
+			n++;
 		}
-		n++;
 	}
 
 
@@ -296,8 +309,12 @@ void step() {
 }
 void idle(void)
 {
-	for (int n = 0; n < 1; n++)
+	gettimeofday(&btimea,NULL);
+	for (int n = 0; n < 100; n++)
 		step();
+	gettimeofday(&btimeb,NULL);
+	double us = (btimeb.tv_sec-btimea.tv_sec)*1000000 + (btimeb.tv_usec-btimea.tv_usec);
+	printf("%f\n",us);
 	look();
 	glutPostRedisplay();
 }
@@ -387,7 +404,7 @@ void init8body()
 }
 void initlotsbodies()
 {
-	for (int n = 0; n < 500; n++) {
+	for (int n = 0; n < 200; n++) {
 		bodies.push_back(Body());
 		bodies[n].position[0] = (double)rand()/RAND_MAX*20-10;
 		bodies[n].position[1] = (double)rand()/RAND_MAX*20-10;
