@@ -163,20 +163,22 @@ void lighting() {
 
 double systemEnergy()
 {
-	double energy = 0;
+	double penergy = 0.0;
 	//potentials
+	#pragma omp parallel for schedule(static,2) reduction(+:penergy)
 	for (int n = 0; n < bodies.size(); n++) {
 		for (int m = n + 1; m < bodies.size(); m++) {
-			energy-=G*bodies[n].mass*bodies[m].mass/(bodies[n].prevposition-bodies[m].prevposition).mag();
+			penergy+=-G*bodies[n].mass*bodies[m].mass/(bodies[n].prevposition-bodies[m].prevposition).mag();
 		}
 	}
 	//kinetic energy
-	double potential = energy;
+	double kenergy = 0.0;
+	#pragma omp parallel for schedule(static,2) reduction(+:kenergy)
 	for (int n = 0; n < bodies.size(); n++) {
-		energy+=bodies[n].mass*bodies[n].prevvelocity.mag_sq()/2;
-		energy+=bodies[n].heatenergy;
+		kenergy+=bodies[n].mass*bodies[n].prevvelocity.mag_sq()/2;
+		kenergy+=bodies[n].heatenergy;
 	}
-	return energy;
+	return penergy + kenergy;
 }
 
 //exert force on a from b
@@ -301,8 +303,7 @@ void step() {
 		}
 	}
 
-	double energy;
-//	double energy = systemEnergy();
+	double energy = systemEnergy();
 	ema_e = (energy-prev_energy)*ema_a+(1-ema_a)*ema_e;
 	prev_energy = energy;
 	firststep = false;
