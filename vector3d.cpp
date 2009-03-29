@@ -44,6 +44,7 @@ Vector3D& Vector3D::operator+=(const Vector3D &right)
 	this->x += right.x;
 	this->y += right.y;
 	this->z += right.z;
+	return *this;
 }
 
 double Vector3D::operator*(const Vector3D &right) const
@@ -66,6 +67,7 @@ Vector3D& Vector3D::operator*=(const double &right)
 	this->x *= right;
 	this->y *= right;
 	this->z *= right;
+	return *this;
 }
 
 Vector3D Vector3D::operator/(const double &right) const
@@ -79,6 +81,7 @@ Vector3D& Vector3D::operator/=(const double &right)
 	this->x /= right;
 	this->y /= right;
 	this->z /= right;
+	return *this;
 }
 
 double& Vector3D::operator[](const int index)
