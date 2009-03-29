@@ -18,7 +18,7 @@
 using namespace std;
 
 #define ENABLE_COLLISIONS 0
-
+#define BENCHMARK 1
 #define TARGETFPS 60
 
 double time = 0.0;
@@ -318,6 +318,8 @@ void idle(void)
 	double us = (btimeb.tv_sec-btimea.tv_sec)*1000000 + (btimeb.tv_usec-btimea.tv_usec);
 	double flops = 18*bodies.size()*bodies.size()*1e-1/us;
 	printf("%f gflops:%2.2f\n",us,flops);
+	if (BENCHMARK)
+		return;
 	look();
 	glutPostRedisplay();
 }
@@ -423,6 +425,9 @@ int main(int argc,char* argv[])
 {  
 //	omp_set_num_threads(4);
 	initlotsbodies();
+	if (BENCHMARK)
+		while (true)
+			idle();
 	rho=3.1;
 	phi=0.0;
 	theta=pi/2.0;
