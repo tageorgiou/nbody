@@ -182,10 +182,10 @@ double systemEnergy()
 void interact(Body &a, Body &b)
 {
 	double distance_sq = (a.position-b.position).mag_sq();
-	double mag = G * a.mass * b.mass / distance_sq / sqrt(distance_sq);
+	double mag = G / distance_sq / sqrt(distance_sq);
 	Vector3D posdiff = (b.position-a.position);
-	Vector3D a_accel = posdiff*(mag/a.mass);
-	Vector3D b_accel = posdiff*(-1*mag/b.mass);
+	Vector3D a_accel = posdiff*(mag*b.mass);
+//	Vector3D b_accel = posdiff*(-1*mag*a.mass);
 	a.accel+=a_accel;//(b.position-a.position)*mag/sqrt(distance_sq)/a.mass;
 //	b.accel+=b_accel;//(a.position-b.position)*mag/sqrt(distance_sq)/b.mass;
 }
