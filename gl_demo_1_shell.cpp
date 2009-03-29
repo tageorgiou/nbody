@@ -425,9 +425,13 @@ int main(int argc,char* argv[])
 {  
 //	omp_set_num_threads(4);
 	initlotsbodies();
-	if (BENCHMARK)
+	if (BENCHMARK) {
+		idle();
+		if (argc > 1)
+			return 0;
 		while (true)
 			idle();
+	}
 	rho=3.1;
 	phi=0.0;
 	theta=pi/2.0;
