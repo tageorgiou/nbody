@@ -41,11 +41,8 @@ Vector3D Vector3D::operator-(const Vector3D &right)
 
 Vector3D& Vector3D::operator+=(const Vector3D &right)
 {
-	#pragma omp atomic
 	this->x += right.x;
-	#pragma omp atomic
 	this->y += right.y;
-	#pragma omp atomic
 	this->z += right.z;
 }
 
@@ -66,11 +63,8 @@ Vector3D Vector3D::operator*(const double &right)
 
 Vector3D& Vector3D::operator*=(const double &right)
 {
-	#pragma omp atomic
 	this->x *= right;
-	#pragma omp atomic
 	this->y *= right;
-	#pragma omp atomic
 	this->z *= right;
 }
 
@@ -82,11 +76,8 @@ Vector3D Vector3D::operator/(const double &right)
 
 Vector3D& Vector3D::operator/=(const double &right)
 {
-	#pragma omp atomic
 	this->x /= right;
-	#pragma omp atomic
 	this->y /= right;
-	#pragma omp atomic
 	this->z /= right;
 }
 
