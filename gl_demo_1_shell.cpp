@@ -14,6 +14,7 @@
 #include "vector3d.h"
 #include <unistd.h>
 #include <vector>
+#include <omp.h>
 using namespace std;
 
 #define ENABLE_COLLISIONS 0
@@ -181,15 +182,12 @@ double systemEnergy()
 void interact(Body &a, Body &b)
 {
 	double distance_sq = (a.position-b.position).mag_sq();
-	double mag = G * a.mass * b.mass / distance_sq;
+	double mag = G * a.mass * b.mass / distance_sq / sqrt(distance_sq);
 	Vector3D posdiff = (b.position-a.position);
-	Vector3D a_accel = posdiff*(mag/sqrt(distance_sq)/a.mass);
-	Vector3D b_accel = posdiff*(-1*mag/sqrt(distance_sq)/b.mass);
-	#pragma omp critical
-	{
+	Vector3D a_accel = posdiff*(mag/a.mass);
+	Vector3D b_accel = posdiff*(-1*mag/b.mass);
 	a.accel+=a_accel;//(b.position-a.position)*mag/sqrt(distance_sq)/a.mass;
 	b.accel+=b_accel;//(a.position-b.position)*mag/sqrt(distance_sq)/b.mass;
-	}
 }
 
 void drawString(char* s)
@@ -230,8 +228,8 @@ void display(void)
 	for (int i = 0; i < bodies.size(); i++) {
 		glPushMatrix();
 		//printf("%f\n",bodies[i].heatenergy);
-		float mcolor2[] = {log(bodies[i].heatenergy)/20,0.0f,0.65f,1.0f};
-		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor2);
+	//	float mcolor2[] = {log(bodies[i].heatenergy)/20,0.0f,0.65f,1.0f};
+	//	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mcolor2);
 		glTranslatef(bodies[i].x(),bodies[i].y(),bodies[i].z());
 		glutSolidSphere(bodies[i].size,32,32);
 		glPopMatrix();
@@ -273,16 +271,18 @@ void look()
 void step() {
 	time+=dt;
 	counter+=0.01;
-	#pragma omp parallel for
-	for (int n = 0; n < bodies.size(); n++) {
-		for (int m = n+1; m < bodies.size(); m++) {
-			if (n==m)
-				continue;
+	//does not having a method call make it better?
+	int length = bodies.size();
+	#pragma omp parallel for schedule(static,2)
+	for (int n = 0; n < length; n++) {
+		for (int m = n+1; m < length; m++) {
+	//		if (n==m)
+	//			continue;
 			interact(bodies[n],bodies[m]);
 		}
 	}
 	#pragma omp parallel for
-	for (int n = 0; n < bodies.size(); n++) {
+	for (int n = 0; n < length; n++) {
 		bodies[n].simulate(dt);
 	}
 
@@ -302,16 +302,16 @@ void step() {
 		}
 	}
 
-
-	double energy = systemEnergy();
+	double energy;
+//	double energy = systemEnergy();
 	ema_e = (energy-prev_energy)*ema_a+(1-ema_a)*ema_e;
 	prev_energy = energy;
 	firststep = false;
 }
 void idle(void)
 {
-	if (time > 1)
-		exit(0);
+//	if (time > 1)
+//		exit(0);
 	gettimeofday(&btimea,NULL);
 	for (int n = 0; n < 100; n++)
 		step();
@@ -421,6 +421,7 @@ void initlotsbodies()
 }
 int main(int argc,char* argv[])
 {  
+//	omp_set_num_threads(4);
 	initlotsbodies();
 	rho=3.1;
 	phi=0.0;
