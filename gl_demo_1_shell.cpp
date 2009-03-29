@@ -22,7 +22,7 @@ using namespace std;
 #define TARGETFPS 60
 #define NOGL
 
-double time = 0.0;
+double simu_time = 0.0;
 ///////////////////////////////
 double pi=3.1415926;
 const double dt = 1e-4;
@@ -254,8 +254,8 @@ void display(void)
 	glRasterPos3f(0.0,0.1,0.0);
 	drawString(str);
 	glutSwapBuffers();
-	//printf("energy:%f t:%f delta E: %F\n",systemEnergy(),time,ema_e);
-	//printf("%f %f\n",time,systemEnergy());
+	//printf("energy:%f t:%f delta E: %F\n",systemEnergy(),simu_time,ema_e);
+	//printf("%f %f\n",simu_time,systemEnergy());
 }
 void look()
 {
@@ -277,7 +277,7 @@ void look()
 #endif
 
 void step() {
-	time+=dt;
+	simu_time+=dt;
 	counter+=0.01;
 	//does not having a method call make it better?
 	int length = bodies.size();
@@ -313,7 +313,7 @@ void step() {
 }
 void idle(void)
 {
-	//if (time > 1)
+	//if (simu_time > 1)
 	//	exit(0);
 	gettimeofday(&btimea,NULL);
 	for (int n = 0; n < 100; n++)
