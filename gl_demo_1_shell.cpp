@@ -27,7 +27,6 @@ double pi=3.1415926;
 const double dt = 1e-4;
 const double G = 1.0e-1;
 const double ema_a = 0.1;
-bool firststep = true;
 
 
 double ema_e = 0.0;
@@ -303,10 +302,6 @@ void step() {
 		}
 	}
 
-	double energy = systemEnergy();
-	ema_e = (energy-prev_energy)*ema_a+(1-ema_a)*ema_e;
-	prev_energy = energy;
-	firststep = false;
 }
 void idle(void)
 {
@@ -321,6 +316,9 @@ void idle(void)
 	printf("%f gflops:%2.2f\n",us,flops);
 	if (BENCHMARK)
 		return;
+	double energy = systemEnergy();
+	ema_e = (energy-prev_energy)*ema_a+(1-ema_a)*ema_e;
+	prev_energy = energy;
 	look();
 	glutPostRedisplay();
 }
