@@ -10,12 +10,12 @@ Vector3D::Vector3D(double x0, double y0, double z0)
 	z = z0;
 }
 
-double Vector3D::mag()
+double Vector3D::mag() const
 {
 	return sqrt(x*x+y*y+z*z);
 }
 
-double Vector3D::mag_sq()
+double Vector3D::mag_sq() const
 {
 	return x*x+y*y+z*z;
 }
@@ -27,13 +27,13 @@ void Vector3D::zero()
 	z = 0.0;
 }
 
-Vector3D Vector3D::operator+(const Vector3D &right)
+Vector3D Vector3D::operator+(const Vector3D &right) const
 {
 	Vector3D result(x+right.x, y+right.y, z+right.z);
 	return result;
 }
 
-Vector3D Vector3D::operator-(const Vector3D &right)
+Vector3D Vector3D::operator-(const Vector3D &right) const
 {
 	Vector3D result(x-right.x, y-right.y, z-right.z);
 	return result;
@@ -46,7 +46,7 @@ Vector3D& Vector3D::operator+=(const Vector3D &right)
 	this->z += right.z;
 }
 
-double Vector3D::operator*(const Vector3D &right)
+double Vector3D::operator*(const Vector3D &right) const
 {
 	double dot = 0;
 	dot += x*right.x;
@@ -55,7 +55,7 @@ double Vector3D::operator*(const Vector3D &right)
 	return dot;
 }
 
-Vector3D Vector3D::operator*(const double &right)
+Vector3D Vector3D::operator*(const double &right) const
 {
 	Vector3D result(x*right, y*right, z*right);
 	return result;
@@ -68,7 +68,7 @@ Vector3D& Vector3D::operator*=(const double &right)
 	this->z *= right;
 }
 
-Vector3D Vector3D::operator/(const double &right)
+Vector3D Vector3D::operator/(const double &right) const
 {
 	Vector3D result(x/right, y/right, z/right);
 	return result;
