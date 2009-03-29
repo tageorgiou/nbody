@@ -20,6 +20,7 @@ using namespace std;
 #define ENABLE_COLLISIONS 0
 #define BENCHMARK 1
 #define TARGETFPS 60
+#define NOGL
 
 double time = 0.0;
 ///////////////////////////////
@@ -146,6 +147,7 @@ void reshape(int wscr,int hscr);
 void lighting();
 ///////////////////////////////
 
+#ifndef NOGL
 void lighting() {
 	GLfloat global_ambient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
@@ -159,6 +161,7 @@ void lighting() {
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
 }
+#endif
 
 double systemEnergy()
 {
@@ -189,13 +192,16 @@ void interact(Body &a, Body &b)
 	a.accel+=posdiff*mag;
 }
 
+#ifndef NOGL
 void drawString(char* s)
 {
 	int k;
 	for(k=0;k<strlen(s);k++)
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,s[k]);
 }
+#endif
 
+#ifndef NOGL
 void display(void)
 {
 	double t;
@@ -268,6 +274,8 @@ void look()
 	glLoadIdentity();
 	gluLookAt(xe,ye,ze, xc,yc,zc, 0.0,up,0.0);
 }
+#endif
+
 void step() {
 	time+=dt;
 	counter+=0.01;
@@ -319,8 +327,10 @@ void idle(void)
 	double energy = systemEnergy();
 	ema_e = (energy-prev_energy)*ema_a+(1-ema_a)*ema_e;
 	prev_energy = energy;
+	#ifndef NOGL
 	look();
 	glutPostRedisplay();
+	#endif
 }
 void mouse(int button,int state,int xscr,int yscr)
 {
@@ -331,6 +341,7 @@ void mouse(int button,int state,int xscr,int yscr)
 	oldtheta = theta;
 	oldphi = phi;
 }
+#ifndef NOGL
 void motion(int xscr,int yscr)
 {
 	phi = (double)(xscr-clickedx)/200+oldphi;
@@ -348,6 +359,7 @@ void mouse_wheel(int wheel,int direction,int xscr,int yscr)
 	look();
 
 }
+#endif
 void keyfunc(unsigned char key,int xscr,int yscr)
 {
 	if(key=='q')
@@ -355,6 +367,7 @@ void keyfunc(unsigned char key,int xscr,int yscr)
 		exit(0);
 	}
 }
+#ifndef NOGL
 void reshape(int wscr,int hscr)
 {
 	GLfloat aspect_ratio;
@@ -370,6 +383,7 @@ void reshape(int wscr,int hscr)
 
 	look();
 }
+#endif
 void init2body()
 {
 	for (int i = 0; i < 2; i++)
@@ -436,6 +450,7 @@ int main(int argc,char* argv[])
 	theta=pi/2.0;
 	xc=yc=zc=0.0;
 
+	#ifndef NOGL
 	glutInit(&argc,argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(w,h);
@@ -466,6 +481,7 @@ int main(int argc,char* argv[])
 	glutReshapeFunc(reshape);
 
 	glutMainLoop();
+	#endif
 
 	return 0;
 }
