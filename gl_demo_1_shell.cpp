@@ -182,9 +182,10 @@ double systemEnergy()
 //exert force on a from b
 void interact(Body &a, Body &b)
 {
-	double distance_sq = (a.position-b.position).mag_sq();
-	double mag = G / distance_sq / sqrt(distance_sq) * b.mass;
-	a.accel+=(b.position-a.position)*mag;
+	Vector3D posdiff = a.position-b.position;
+	double distance_sq = posdiff.mag_sq();
+	double mag = -G / distance_sq / sqrt(distance_sq) * b.mass;
+	a.accel+=posdiff*mag;
 }
 
 void drawString(char* s)
@@ -315,7 +316,8 @@ void idle(void)
 		step();
 	gettimeofday(&btimeb,NULL);
 	double us = (btimeb.tv_sec-btimea.tv_sec)*1000000 + (btimeb.tv_usec-btimea.tv_usec);
-	printf("%f\n",us);
+	double flops = 18*bodies.size()*bodies.size()*1e-1/us;
+	printf("%f gflops:%2.1f\n",us,flops);
 	look();
 	glutPostRedisplay();
 }
