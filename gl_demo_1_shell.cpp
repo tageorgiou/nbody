@@ -187,7 +187,7 @@ void interact(Body &a, Body &b)
 	Vector3D a_accel = posdiff*(mag/a.mass);
 	Vector3D b_accel = posdiff*(-1*mag/b.mass);
 	a.accel+=a_accel;//(b.position-a.position)*mag/sqrt(distance_sq)/a.mass;
-	b.accel+=b_accel;//(a.position-b.position)*mag/sqrt(distance_sq)/b.mass;
+//	b.accel+=b_accel;//(a.position-b.position)*mag/sqrt(distance_sq)/b.mass;
 }
 
 void drawString(char* s)
@@ -275,9 +275,9 @@ void step() {
 	int length = bodies.size();
 	#pragma omp parallel for schedule(static,2)
 	for (int n = 0; n < length; n++) {
-		for (int m = n+1; m < length; m++) {
-	//		if (n==m)
-	//			continue;
+		for (int m = 0; m < length; m++) {
+			if (n==m)
+				continue;
 			interact(bodies[n],bodies[m]);
 		}
 	}
@@ -310,8 +310,8 @@ void step() {
 }
 void idle(void)
 {
-//	if (time > 1)
-//		exit(0);
+	if (time > 1)
+		exit(0);
 	gettimeofday(&btimea,NULL);
 	for (int n = 0; n < 100; n++)
 		step();
