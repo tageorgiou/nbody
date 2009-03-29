@@ -1,3 +1,5 @@
+#ifndef VECTOR3D_H
+#define VECTOR3D_H
 class Vector3D {
 	public:
 		Vector3D(double x0 = 0.0, double y0 = 0.0, double z0 = 0.0);
@@ -15,4 +17,4 @@ class Vector3D {
 		double operator*(const Vector3D &right);
 		double& operator[](const int index);
 };
-
+#endif
