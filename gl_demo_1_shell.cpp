@@ -317,7 +317,7 @@ void idle(void)
 	gettimeofday(&btimeb,NULL);
 	double us = (btimeb.tv_sec-btimea.tv_sec)*1000000 + (btimeb.tv_usec-btimea.tv_usec);
 	double flops = 18*bodies.size()*bodies.size()*1e-1/us;
-	printf("%f gflops:%2.1f\n",us,flops);
+	printf("%f gflops:%2.2f\n",us,flops);
 	look();
 	glutPostRedisplay();
 }
