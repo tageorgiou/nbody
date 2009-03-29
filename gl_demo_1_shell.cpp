@@ -24,7 +24,7 @@ using namespace std;
 double time = 0.0;
 ///////////////////////////////
 double pi=3.1415926;
-const double dt = 1e-3;
+const double dt = 1e-4;
 const double G = 1.0e-1;
 const double ema_a = 0.1;
 bool firststep = true;
@@ -222,6 +222,7 @@ void display(void)
 	glMaterialfv(GL_FRONT, GL_SPECULAR, specReflect);
 	glMateriali(GL_FRONT, GL_SHININESS, 96);
 //	printf("--\n");
+	#pragma omp parallel for
 	for (int i = 0; i < bodies.size(); i++) {
 		glPushMatrix();
 		//printf("%f\n",bodies[i].heatenergy);
@@ -307,8 +308,8 @@ void step() {
 }
 void idle(void)
 {
-	if (time > 1)
-		exit(0);
+	//if (time > 1)
+	//	exit(0);
 	gettimeofday(&btimea,NULL);
 	for (int n = 0; n < 100; n++)
 		step();
