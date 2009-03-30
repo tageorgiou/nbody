@@ -8,8 +8,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#include <GL/glut.h>
-#include <GL/freeglut_ext.h>
 #include <sys/time.h>
 #include "vector3d.h"
 #include <unistd.h>
@@ -21,6 +19,11 @@ using namespace std;
 #define BENCHMARK 1
 #define TARGETFPS 60
 #define NOGL
+
+#ifndef NOGL
+#include <GL/glut.h>
+#include <GL/freeglut_ext.h>
+#endif
 
 double simu_time = 0.0;
 ///////////////////////////////
@@ -35,7 +38,9 @@ double ema_fps = 60.0;
 double prev_energy = 0.0;
 
 int	w=640,h=480;
+#ifndef NOGL
 GLUquadric *background;
+#endif
 
 double rho,phi,theta,up=1.0,oldtheta,oldphi,counter=0.0;
 double xc,yc,zc,xe,ye,ze;
@@ -106,15 +111,18 @@ void Body::simulate(double dt) {
 //	printf("r:%f %f %f\n",position[0],position[1],position[2]);
 
 	//finish previous timestep!!
+	
+	//why does SUNCC HATE THIS?
+	//velocity += accel*(dt/2);
 	velocity += accel*dt/2;
 
 	prevposition = position;
 	prevvelocity = velocity;	
 
 	position += velocity*dt;
-	position += accel*dt*dt/2;
+	position += accel*(dt*dt/2);
 
-	velocity += accel*dt/2;
+	velocity += accel*(dt/2);
 	//timestep is unfinished!
 	accel.zero();
 
@@ -281,7 +289,7 @@ void step() {
 	counter+=0.01;
 	//does not having a method call make it better?
 	int length = bodies.size();
-	#pragma omp parallel for schedule(static,2)
+	#pragma omp parallel for schedule(static,4)
 	for (int n = 0; n < length; n++) {
 		for (int m = 0; m < length; m++) {
 			if (n==m)
@@ -289,6 +297,7 @@ void step() {
 			interact(bodies[n],bodies[m]);
 		}
 	}
+
 	#pragma omp parallel for
 	for (int n = 0; n < length; n++) {
 		bodies[n].simulate(dt);
@@ -422,7 +431,7 @@ void init8body()
 }
 void initlotsbodies()
 {
-	for (int n = 0; n < 200; n++) {
+	for (int n = 0; n < 2000; n++) {
 		bodies.push_back(Body());
 		bodies[n].position[0] = (double)rand()/RAND_MAX*20-10;
 		bodies[n].position[1] = (double)rand()/RAND_MAX*20-10;
