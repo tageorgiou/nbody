@@ -29,14 +29,12 @@ void Vector3D::zero()
 
 inline Vector3D Vector3D::operator+(const Vector3D &right) const
 {
-	Vector3D result(x+right.x, y+right.y, z+right.z);
-	return result;
+	return Vector3D(x+right.x, y+right.y, z+right.z);
 }
 
 inline Vector3D Vector3D::operator-(const Vector3D &right) const
 {
-	Vector3D result(x-right.x, y-right.y, z-right.z);
-	return result;
+	return Vector3D(x-right.x, y-right.y, z-right.z);
 }
 
 inline Vector3D& Vector3D::operator+=(const Vector3D &right)
@@ -58,8 +56,7 @@ double Vector3D::operator*(const Vector3D &right) const
 
 inline Vector3D Vector3D::operator*(const double &right) const
 {
-	Vector3D result(x*right, y*right, z*right);
-	return result;
+	return Vector3D(x*right, y*right, z*right);
 }
 
 inline Vector3D& Vector3D::operator*=(const double &right)
@@ -72,8 +69,7 @@ inline Vector3D& Vector3D::operator*=(const double &right)
 
 inline Vector3D Vector3D::operator/(const double &right) const
 {
-	Vector3D result(x/right, y/right, z/right);
-	return result;
+	return Vector3D(x/right, y/right, z/right);
 }
 
 inline Vector3D& Vector3D::operator/=(const double &right)
