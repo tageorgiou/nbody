@@ -17,25 +17,25 @@ class Vector3D {
 		inline Vector3D operator-(const Vector3D &right) const {return Vector3D(x-right.x, y-right.y, z-right.z);};
 		inline Vector3D& operator+=(const Vector3D &right)
 		{
-			this->x += right.x;
-			this->y += right.y;
-			this->z += right.z;
+			x += right.x;
+			y += right.y;
+			z += right.z;
 			return *this;
 		};
 		inline Vector3D operator/(const double &right) const {return Vector3D(x/right, y/right, z/right);};
 		inline Vector3D& operator/=(const double &right)
 		{
-			this->x /= right;
-			this->y /= right;
-			this->z /= right;
+			x /= right;
+			y /= right;
+			z /= right;
 			return *this;
 		};
 		inline Vector3D operator*(const double &right) const {return Vector3D(x*right, y*right, z*right);};
 		inline Vector3D& operator*=(const double &right)
 		{
-			this->x *= right;
-			this->y *= right;
-			this->z *= right;
+			x *= right;
+			y *= right;
+			z *= right;
 			return *this;
 		};
 		double operator*(const Vector3D &right) const
